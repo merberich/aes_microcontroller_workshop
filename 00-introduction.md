@@ -33,7 +33,8 @@ Common use cases:
 ## Workshop Contents
 
 - Microcontroller theory:
-  - Electronics and digital logic
+  - Electronics
+  - Digital logic
   - Computer elements and architecture
   - C language
   - Microcontroller design
