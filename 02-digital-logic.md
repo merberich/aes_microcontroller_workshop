@@ -135,7 +135,7 @@ The OR gate is functionally equivalent to the OR boolean operator. Its output is
 
 **NOR Gate**
 <img src="res/logic-gate-NOR.png" title="Source: https://en.wikipedia.org/wiki/File:NOR_ANSI_Labelled.svg">
-The NOR gate is effectively an OR gate with a trailing NOT gate. Its output is true only if both inputs are false. Note that NOR is another universal logic gate. Recalling DeMorgan's Laws:
+The NOR gate is effectively an OR gate with a trailing NOT gate. Its output is true only if both inputs are false. Note that NOR is another universal logic gate. Recalling De Morgan's Laws:
 \(\neg(p \wedge q) \equiv \neg p \vee \neg q\)
 \(\neg(p \vee q) \equiv \neg p \wedge \neg q\)
 the combinations of negation and OR or AND can be used to reach the other operator. Since NAND is a universal logic gate, NOR necessarily must be as well.
@@ -154,18 +154,32 @@ An online simulator for logic circuits can be found [here](https://circuitverse.
 
 Devising and solving logic circuits can also be a fun puzzle when idle. If you have an Android device (or emulator), "Circuit Scramble" and "Make it True - Solve the Circuit" both scratch this itch.
 
-## Computer Logic Foundations
+## Implementation Options
 
-`@todo talk about HDLs and PLCs/FPGAs here`
+Up to this point, we've discussed electronics primarily from a schematic point of view (with the exception of transistors). In this section, we'll discuss possible ways to realize circuits with commercial off-the-shelf (COTS) components.
 
-## Binary Number Theory
+**Stand-Alone Components**
+<img src="res/example-standalone-components.png" title="Source: https://www.codrey.com/wp-content/uploads/2017/11/Electronic-Components.png">
 
-`@todo twos-complement, how this relates to logic`
-`@todo another interactive demo`
+The most straightforward way to build circuits is with stand-alone components (not a formal term). These are devices purchased commercially that serve as implementation of one electronic element (passive or active). Stand-alone components typically support either through-hole or surface-mount fabrication techniques.
 
-## Bitwise Operations
+**Integrated Circuits**
+<img src="res/example-ic-surface-mount.jpg" title="Source: https://si.wsj.net/public/resources/images/ED-AX894_Rodger_GR_20180907144045.jpg" style="width:30%">
 
-`@todo flip flops, and how to build logic from them`
-`@todo bitwise operations on twos-complement numbers`
+Integrated Circuits (ICs), also known as microchips, are collections of dedicated circuits implemented on a silicon wafer via photolithography. Where circuits composed of stand-alone components are made by soldering components onto a printed circuit board one component at a time, an integrated circuit's components are fabricated all at once. This makes mass manufacturing particularly easy, but also means that it is impossible to correct circuit errors after fabrication.
+
+Integrated circuits expose electrical terminals as "pins", which lie either at the edge of the IC or underneath it. Where the terminals stand-alone components are defined by their electrical connections, integrated circuits are free to expose any net in the circuit on a pin.
+
+Logic gates themselves can be exposed as integrated circuits, often in groups of four, though there are a wide variety of components expressed as ICs: microcontrollers, sensors, hardware drivers, discrete computer components, transistor bundles, voltage regulators, etc.
+
+**Field-Programmable Gate Arrays (FPGAs)**
+<img src="res/fpga-architecture.jpg" title="Source: https://www.watelectronics.com/wp-content/uploads/FPGA-Architecture-300x200.jpg">
+FPGAs are a configuration of integrated circuit in which the hardware can be configured after manufacture. To do so, the FPGA offers logic cells called **lookup tables (LUTs)**, which are effectively programmable truth tables for single operators. The LUTs can be flexibly wired to each other through a programmable **interconnect** system, and then programmed to interface with the external world via programmable **input/output (I/O) blocks**.
+
+FPGAs expose outputs - typically far more than other types of ICs, so it is common to see FPGAs with pins exposed using the ball grid array (BGA) surface-mount technique, where all pins are exposed as round contact "balls" underneath the chip package.
+
+Since FPGAs are so flexible, designing with them requires a pseudo-programming language called a **hardware description language (HDL)**, which converts human-readable logic and commands to the configuration that the FPGA expresses. The flexibility of FPGAs allows hardware designers to simulate the logic blocks of other (prototype) ICs and perform verification. Additionally, due to the large number of pins supported, FPGAs are popular in devices with high I/O requirements or applications requiring easily reconfigurable logic: audio/video encoding/decoding, software-defined radio, image processing, networking controllers, computer emulation, prototyping, etc.
+
+While FPGA development is incredibly handy to hardware designers and some embedded systems applications, this workshop will focus primarily on microcontrollers, another type of integrated circuit.
 
 [Home](index.md)
