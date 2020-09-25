@@ -1,22 +1,24 @@
 
 # Digital Logic
 
+Now that we have solid footing in understanding that electrical systems can produce circuits capable of stably representing two distinct states (digital systems), we need a theory allowing us to make statements in digital logic systems. This section will cover the mathematics supporting these digital logic systems.
+
 ## Boolean Algebra
 
 **Boolean Algebra** is the field of mathematics dealing with expressions that can be evaluated only to the values True (1) or False (0). Boolean algebra forms the core of any digital logic system.
 
 ### Basic Operators
 
-Boolean algebra relies on common operations just like numeric algebra. Operators can work on one or more variables. Since the possible values for an output of an operator are discrete, we can form **truth tables** to describe the conditions that operators produce. The common operators are:
+Just like any other algebraic system, boolean algebra relies on a set of common "operators" to describe relationships between values. Operators can work on one or more variables. Since the possible values for an output of an operator are discrete, we can form **truth tables** to describe the conditions that operators produce. The common operators are:
 
 **NOT (aka negation or complement)**
-| p | \(\neg\)p |
+| \(p\) | \(\neg p\) |
 | - | - |
 | T  | F  |
 | F  | T  |
 
 **AND (aka conjunction)**
-| p | q | \(p \wedge q\) |
+| \(p\) | \(q\) | \(p \wedge q\) |
 | - | - | - |
 | T  | T  | T  |
 | T  | F  | F  |
@@ -24,7 +26,7 @@ Boolean algebra relies on common operations just like numeric algebra. Operators
 | F  | F  | F  |
 
 **OR (aka disjunction)**
-| p | q | \(p \vee q\) |
+| \(p\) | \(q\) | \(p \vee q\) |
 | - | - | - |
 | T  | T  | T  |
 | T  | F  | T  |
@@ -32,7 +34,7 @@ Boolean algebra relies on common operations just like numeric algebra. Operators
 | F  | F  | F  |
 
 **XOR (aka exclusive or)**
-| p | q | \(p \oplus q\) |
+| \(p\) | \(q\) | \(p \oplus q\) |
 | - | - | - |
 | T  | T  | F  |
 | T  | F  | T  |
@@ -40,7 +42,7 @@ Boolean algebra relies on common operations just like numeric algebra. Operators
 | F  | F  | F  |
 
 **IMPLIES (aka implication or logical conditional)**
-| p | q | \(p \rightarrow q\) |
+| \(p\) | \(q\) | \(p \rightarrow q\) |
 | - | - | - |
 | T  | T  | T  |
 | T  | F  | F  |
@@ -48,7 +50,7 @@ Boolean algebra relies on common operations just like numeric algebra. Operators
 | F  | F  | T  |
 
 **EQUIVALENCE (aka biconditional)**
-| p | q | \(p \leftrightarrow q\) |
+| \(p\) | \(q\) | \(p \leftrightarrow q\) |
 | - | - | - |
 | T  | T  | T  |
 | T  | F  | F  |

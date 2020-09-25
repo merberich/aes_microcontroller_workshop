@@ -44,7 +44,6 @@ Common use cases:
 ## Prerequisites
 
 - You have a computer with internet access that you are comfortable installing programs on.
-- You have taken high basic physics (classical mechanics).
 - You are not afraid of the terminal / command line.
 - You want to learn about the underlying theory of microcontrollers!
 
