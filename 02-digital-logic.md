@@ -14,48 +14,48 @@ Just like any other algebraic system, boolean algebra relies on a set of common 
 **NOT (aka negation or complement)**
 | \(p\) | \(\neg p\) |
 | - | - |
-| T  | F  |
-| F  | T  |
+| 1 | 0 |
+| 0 | 1 |
 
 **AND (aka conjunction)**
 | \(p\) | \(q\) | \(p \wedge q\) |
 | - | - | - |
-| T  | T  | T  |
-| T  | F  | F  |
-| F  | T  | F  |
-| F  | F  | F  |
+| 0 | 0 | 0 |
+| 0 | 1 | 0 |
+| 1 | 0 | 0 |
+| 1 | 1 | 1 |
 
 **OR (aka disjunction)**
 | \(p\) | \(q\) | \(p \vee q\) |
 | - | - | - |
-| T  | T  | T  |
-| T  | F  | T  |
-| F  | T  | T  |
-| F  | F  | F  |
+| 0 | 0 | 0 |
+| 0 | 1 | 1 |
+| 1 | 0 | 1 |
+| 1 | 1 | 1 |
 
 **XOR (aka exclusive or)**
 | \(p\) | \(q\) | \(p \oplus q\) |
 | - | - | - |
-| T  | T  | F  |
-| T  | F  | T  |
-| F  | T  | T  |
-| F  | F  | F  |
+| 0 | 0 | 0 |
+| 0 | 1 | 1 |
+| 1 | 0 | 1 |
+| 1 | 1 | 0 |
 
 **IMPLIES (aka implication or logical conditional)**
 | \(p\) | \(q\) | \(p \rightarrow q\) |
 | - | - | - |
-| T  | T  | T  |
-| T  | F  | F  |
-| F  | T  | T  |
-| F  | F  | T  |
+| 0 | 0 | 1 |
+| 0 | 1 | 1 |
+| 1 | 0 | 0 |
+| 1 | 1 | 1 |
 
 **EQUIVALENCE (aka biconditional)**
 | \(p\) | \(q\) | \(p \leftrightarrow q\) |
 | - | - | - |
-| T  | T  | T  |
-| T  | F  | F  |
-| F  | T  | F  |
-| F  | F  | T  |
+| 0 | 0 | 1 |
+| 0 | 1 | 0 |
+| 1 | 0 | 0 |
+| 1 | 1 | 1 |
 
 ### Propositional Laws
 
@@ -66,12 +66,12 @@ Similar to numeric algebra, the operations in boolean algebra give rise to certa
   \(\neg(p \vee q) \equiv \neg p \wedge \neg q\)
 
 **Identity laws**
-  \(p \wedge T \equiv p\)
-  \(p \vee F \equiv p\)
+  \(p \wedge 1 \equiv p\)
+  \(p \vee 0 \equiv p\)
 
 **Domination laws**:
-  \(p \vee T \equiv T\)
-  \(p \wedge F \equiv F\)
+  \(p \vee 1 \equiv 1\)
+  \(p \wedge 0 \equiv 0\)
 
 **Idempotent laws**:
   \(p \vee p \equiv p\)
@@ -97,8 +97,8 @@ Similar to numeric algebra, the operations in boolean algebra give rise to certa
   \(p \wedge (p \vee q) \equiv p\)
 
 **Negation laws**:
-  \(p \vee \neg p \equiv T\)
-  \(p \wedge \neg p \equiv F\)
+  \(p \vee \neg p \equiv 1\)
+  \(p \wedge \neg p \equiv 0\)
 
 ## Logic Gates
 
