@@ -3,6 +3,25 @@
 
 Now that we have a theories to represent digital logic and binary numbers (which we can bring to reality by use of electrical circuits), if we want that system to accomplish practical, complex tasks, we need to organize it to do so. This section will describe the fundamental elements (composed of logic gates) used to develop the hierarchy of functionality we call a "computer".
 
+## Finite State Machines
+
+Central to most computer elements is the concept of a **Finite State Machine (FSM)** - a model of operation describing the fixed (finite) number of operating states a system can be in at any time. FSMs are useful in documenting and understanding how a system can flow between different states. FSMs are typically documented via a **State Transition Table**, which is very similar to a truth table, but instead describes _change_. For the visually-oriented, **State Diagrams** can also be used to describe FSMs. In both cases, it is critical to document the conditions that cause state transitions, as well as the effects of the transition.
+
+For instance, the state transition table for a mechanical turnstile could look like the following:
+
+| Current State | Condition | Next State | Effects |
+|-|-|-|-|
+| Locked | coin inserted | Unlocked | Unlocks the turnstile, allows pushing through |
+| Locked | customer pushes | Locked | No effect |
+| Unlocked | coin inserted | Unlocked | Coin returned; already unlocked |
+| Unlocked | customer pushes | Locked | Locks after one full rotation |
+
+The equivalent transition diagram could look like the following:
+
+<img src="res/example-state-machine.png" title="Source: https://en.wikipedia.org/wiki/File:Turnstile_state_machine_colored.svg" width="350px">
+
+FSMs are also particularly useful when developing new systems as a means of exploring behavioral requirements and checking validity of behavior.
+
 ## Computer Elements
 
 Computer elements generally serve the purpose of storing, transmitting, or operating on either binary numbers or raw bits. For practical purposes, this workshop will only cover a handful of possible of these "building blocks" for computers.
@@ -11,7 +30,7 @@ Computer elements generally serve the purpose of storing, transmitting, or opera
 
 One of the simplest ways to store data is called a **Flip-Flop, or Latch**. A latch is a computer element capable of storing the state of one bit.
 
-The simplest latch is known as a **SR Latch**, where the circuit has two inputs (Set and Reset) and two outputs (Q and NOT-Q). Implemented via NOR gates, the SR latch has the following truth table:
+The simplest latch is known as a **SR Latch**, where the circuit has two inputs (Set and Reset) and two outputs (Q and NOT-Q). Implemented via NOR gates, the SR latch has the following state transition table:
 
 <div width="40%" style="float:left; margin-right:10px;">
 
@@ -27,7 +46,7 @@ The simplest latch is known as a **SR Latch**, where the circuit has two inputs 
 
 The main value that a simple SR latch provides is that when the Set and Reset inputs are both low (false), then the latch holds its current value. Then, when one of the inputs goes high, the output changes to accommodate the new condition.
 
-In practice, a more complex latch known as a **Gated D Latch** is used. A Gated D Latch has some special properties. Being "gated" means that the latch has a special "enable" input: the latch state is only capable of changing when the enable line is high. Secondly, the D Latch takes advantage of the fact that output only changes for a SR Latch when S is the complement of R, so "D" and "NOT-D" represent these cases, with "D" for Data being the only input. Effectively, this means that the latch buffers Data when Enabled. The Gated D Latch has the following truth table:
+In practice, a more complex latch known as a **Gated D Latch** is used. A Gated D Latch has some special properties. Being "gated" means that the latch has a special "enable" input: the latch state is only capable of changing when the enable line is high. Secondly, the D Latch takes advantage of the fact that output only changes for a SR Latch when S is the complement of R, so "D" and "NOT-D" represent these cases, with "D" for Data being the only input. Effectively, this means that the latch buffers Data when Enabled. The Gated D Latch has the following state transition table:
 
 <div width="40%" style="float:left; margin-right:10px;">
 
@@ -40,7 +59,7 @@ In practice, a more complex latch known as a **Gated D Latch** is used. A Gated 
 
 <img src="res/elem-d-latch.png" title="Source: https://en.wikipedia.org/wiki/File:D-Type_Transparent_Latch.svg" width="400px">
 
-The **D Flip-Flop** is a derivative of the Gated D Latch in which the enable condition (now called Clock) is instead defined by the rising or falling edge of the signal. In addition, the D Flip-Flop may expose the Set and Reset lines from the underlying SR Latch implementation (which ignore the Enable and Data lines). For most implementations, when Set and Reset are assigned high, the output is determined high; when Set and Reset are both low, this becomes the truth table:
+The **D Flip-Flop** is a derivative of the Gated D Latch in which the enable condition (now called Clock) is instead defined by the rising or falling edge of the signal. In addition, the D Flip-Flop may expose the Set and Reset lines from the underlying SR Latch implementation (which ignore the Enable and Data lines). For most implementations, when Set and Reset are assigned high, the output is determined high; when Set and Reset are both low, this becomes the state transition table:
 
 <div width="40%" style="float:left; margin-right:10px;">
 
@@ -101,20 +120,28 @@ Addition as an operation takes two numbers and any existing carry value, and pro
 
 The Full Adder takes in two bits \(A\) and \(B\), plus any existing carry bit \(C_{in}\) and produces the sum \(S\) and a resulting carry bit \(C_{out}\) for the operation. The truth table for a full adder is as shown.
 
-A full adder only takes the sum of two bits, however. To take the sum of two \(n\)-bit binary numbers, we can simply perform the sum of each pair of bits in each sequence, and make sure we propagate the carry value as we would when adding by hand.
+A full adder takes the sum of just two bits, however. To take the sum of two \(n\)-bit binary numbers, we can simply perform the sum of each pair of bits in each sequence, and make sure we propagate the carry value as we would when adding by hand.
 
 <br>
 <img src="res/example-chained-adder.png" title="Source: https://en.wikipedia.org/wiki/File:4-bit_ripple_carry_adder.svg" width="700px">
 
+There are many other implementations of both arithmetic and logical operators in practice. More operators will be discussed later.
+
 ### Timers, Counters, and Clocking
 
-`@todo clocking overview`
-`@todo counter`
-`@todo timer`
+One major problem in the construction of digital logic circuits is synchronization - making sure that all relevant changes in line levels are accounted for, rather than skipped or double-counted. One of the most common ways to deal with synchronization is to include a **clock signal**, which is used to step multiple computer elements simultaneously. A clock signal is one that oscillates between high and low at a deterministic rate. It is effectively a timekeeping device: anything connected to the clock signals steps in time with one edge of the clock as it toggles.
 
-## Finite State Machines
+A very rudimentary clock can be constructed from an op-amp, a resistor, and capacitor in the form of an [RC Oscillator](https://www.ti.com/lit/an/snoa998/snoa998.pdf). The RC Oscillator takes advantage of the time constant involved with charging a capacitor via a current-limited resistor element. In practice, however, RC Oscillators are particularly inaccurate because the clock frequency relies on part tolerances.
 
-`@todo concept and applications`
+A different clock implementation that is very common in embedded systems is a [Piezoelectric Crystal Oscillator (Crystal Oscillator)](https://www.youtube.com/watch?v=fPKdDCiJDok). Typically, crystal-based oscillators have a much higher accuracy and less drift over time.
+
+Clock signals are helpful beyond just synchronizing state machines as well. We can use a **Counter** element to quantify the amount of time that has passed. A counter is a collection of flip flops whose state represents the number of clock pulses seen at input. Counters can either be synchronous (where one clock signal causes all flip-flops to update state simultaneously), or asynchronous (where the clock signal drives only the first flip-flop, which serially drives the next, etc). Synchronous counters are generally faster because they perform the state update in parallel.
+
+For example, a three-bit up-counter can be implemented with three positive edge triggered D flip-flops:
+
+<img src="res/elem-counter.gif" title="Made via https://circuitverse.org/simulator">
+
+Finally, now that we can determine the amount of time that has elapsed since the last counter reset, it is possible to use this information to trigger events. A module that can send signals based on the status of a counter is known as a **Timer**. A simple implementation of a timer could maintain a target register and counter, and after each clock step, perform a bitwise equality check between the target register and counter value. The timer could then optionally trigger different events for counter overflow/return to zero, or a match on the comparison with the target register and counter value.
 
 ## Computer Architecture
 
