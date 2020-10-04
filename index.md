@@ -11,10 +11,10 @@
 - [Digital Logic](#digital-logic)
 - [Binary Number Theory](#binary-number-theory)
 - [Computer Elements and Architecture](#computer-elements-and-architecture)
+- [High-Level Language Programming (with C)](#high-level-language-programming-with-c)
+- [Microcontroller Hands-On](#microcontroller-hands-on)
 
 <!-- /TOC -->
-- `@todo C language`
-- `@todo microcontrollers`
 
 ## Introduction
 
@@ -136,7 +136,7 @@ Note that most circuit design is done via schematic programs such as [Altium](ht
 
 Circuit simulation is typically done with a [SPICE](https://en.wikipedia.org/wiki/SPICE) program such as [LTspice](https://www.analog.com/en/design-center/design-tools-and-calculators/ltspice-simulator.html), [ngspice](http://ngspice.sourceforge.net/xspice.html), or a simulator built-in with the chosen circuit design software suite.
 
-_Demo_: Simple voltage divider with [PartSim](https://www.partsim.com/simulator).
+_Demo_: Simple voltage divider with [PartSim](https://www.partsim.com/simulator) simulator.
 
 ### Transistors and Common Configurations
 
@@ -334,7 +334,7 @@ The XNOR gate is effectively an XOR gate with a trailing NOT gate. It is also fu
 
 For a full proof of universality of NAND and NOR, see [this resource](https://www.edupointbd.com/universality-of-nand-and-nor-gates/).
 
-An online simulator for logic circuits can be found [here](https://circuitverse.org/simulator).
+_Demo_: logic ladder via [CircuitVerse](https://circuitverse.org/simulator) simulator.
 
 Devising and solving logic circuits can also be a fun puzzle when idle. If you have an Android device (or emulator), "Circuit Scramble" and "Make it True - Solve the Circuit" both scratch this itch.
 
@@ -671,6 +671,10 @@ For example, a three-bit up-counter can be implemented with three positive edge 
 Finally, now that we can determine the amount of time that has elapsed since the last counter reset, it is possible to use this information to trigger events. A module that can send signals based on the status of a counter is known as a **Timer**. A simple implementation of a timer could maintain a target register and counter, and after each clock step, perform a bitwise equality check between the target register and counter value. The timer could then optionally trigger different events for counter overflow/return to zero, or a match on the comparison with the target register and counter value.
 
 ### Computer Architecture
+
+With theoretical understanding of how logic circuits behave and can be combined into functional structures, we can now finally define what a computer is. A **Computer** is any machine that stores, retrieves, and processes data _automatically_; that is, it can be instructed to perform sequences of arithmetic or logical operations, and it will carry out those operations with no further input.
+
+
 
 `@todo formal definition of computer`
 `@todo primary functional elements`
