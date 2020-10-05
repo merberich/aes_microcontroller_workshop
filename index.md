@@ -674,12 +674,79 @@ Finally, now that we can determine the amount of time that has elapsed since the
 
 With theoretical understanding of how logic circuits behave and can be combined into functional structures, we can now finally define what a computer is. A **Computer** is any machine that stores, retrieves, and processes data _automatically_; that is, it can be instructed to perform sequences of arithmetic or logical operations, and it will carry out those operations with no further input.
 
+In order to accomplish these tasks, a computer needs four essential components:
+1) **Memory** in order to store and retrieve data and instructions
+2) A **Processing Unit** that can carry out logical and arithmetic operations
+3) **Input / Output (I/O)** interfaces to send and receive signals from the world
+4) A **Control Unit** that route and interprets instructions and tracks program operation
 
+Typically, when we talk about the "CPU" of a computer (Central Processing Unit), we refer to the collective function of the control unit and the processing unit, though the term is somewhat muddied today.
 
-`@todo formal definition of computer`
-`@todo primary functional elements`
-`@todo instructions, CPU cycle finite state machine`
-`@todo practical computer architectures`
+There are two main reference processor architectures which dictate how these primary components can be interconnected. In a **von Neumann Architecture (aka Princeton Architecture)**, there is a single bus that transfers both program information and operating data to/from a single memory area. Contrasting this is the **Harvard Architecture**, which splits memory into distinct program memory and data memory areas, and therefore has two different buses connecting to each of these memory areas.
+
+Most modern processor designs (including AVR, ARM, and x86) follow a **Modified Harvard Architecture**, where data and instructions can reside in the same memory area, but there are still two buses which communicate data vs instructions.
+
+<img src="res/diagram-computer-architectures.jpg" title="Source: https://www.polytechnichub.com/wp-content/uploads/2017/04/Harvard-architecture-and-von-Neumann-architecture.jpg">
+
+_von Neumann Architecture (left) vs Harvard Architecture (right)_
+
+Now that we have a reasonable outline of the components that describe a computer, we can talk about their operations in detail.
+
+#### Memory
+
+As we've previously discussed, **Memory** is a collection of addressable uniform-length bitfields that are accessible via generalized **Load** and **Store** operations. More formally, we can say that memory contains a \(2^k\) x \(m\) set of bits, where \(m\) is the number of bits describing one piece of data (the data's bit length), and \(k\) is the number of bits needed to describe the index of the data (its address). Another way to think about memory schematically is as an indexed table of distinct pieces of information (which are all the same size).
+
+Example: 2-bit addressing for 8-bit data
+| Address | Data |
+|-|-|
+| 00 | xxxxxxxx |
+| 01 | xxxxxxxx |
+| 10 | xxxxxxxx |
+| 11 | xxxxxxxx |
+
+The architecture of different types of memory units varies based on their purpose: non-volatile memory is generally more complex than volatile memory. The simplest form of volatile memory is **Random-Access Memory (RAM)**, which allows access of any individual memory location at nearly uniform access speed. RAM forms the backbone of almost all computers today, and is the most common form of data memory (sometimes functioning as program memory after being loaded).
+
+The simplest implementation of RAM contains two registers and two signal lines. The **Memory Address Register (MAR)** (bit width \(k\)) describes the address in RAM to target with the selected operation. Separate "store" and "load" signal lines tell the RAM implementation which operation to perform. If the "store" signal is selected (sent to logic high), the contents of the **Memory Data Register (MDR)** will be written to the memory address indicated by the MAR. If the "load" signal is selected, the memory contents at address indicated by the MAR will be copied into the MDR, which the computer can then read and interpret. In either case, the computer only interacts with the interface - not the internal hardware of the memory. There are other types of volatile memory useful to computer implementation (cache, DRAM, etc) that are outside the scope of current discussion.
+
+Program memory is typically implemented as non-volatile memory, but we will not go into implementation specifics here.
+
+#### Processing Unit
+
+The **Processing Unit** within a CPU contains all faculties necessary to do logical, arithmetic, and (sometimes) floating-point operations.
+
+<img src="res/schematic-alu.gif" title="Source: https://en.wikipedia.org/wiki/File:ALU_block.gif" width="40%" style="float:left; margin-right:10px;">
+
+All processing units contain an **Arithmetic Logic Unit (ALU)** which implements common bitwise and integer arithmetic operators via logic gates. Commonly, ALU implementations are driven by four buses: operand A, operand B, opcode, and status. Operands A and B are the integer values that the ALU will operate on. The opcode bus value determines which operation the ALU will perform (the operation is encoded as a binary value). The status input bus indicates any secondary result from a previous operation, which may be relevant to the current operation (i.e. a carry value for addition). Likewise, the ALU typically exposes two output buses: one indicating the status for the current operation, and one for the operation's result. The ALU data bus width is the bit width of one **Word**: the bit width describing the size of an integer on the machine.
+
+Processing units may also provide several internal multipurpose registers. Their utility is in the fact that accessing these internal registers is considerably faster than needing to pull information from memory when working with simple calculations. Naturally, these registers are also the word size of the machine, since they can supply inputs or store the result calculated via the ALU.
+
+Lastly, the processing unit may contain an internal **Floating-Point Unit (FPU)**, in the case of many high-performance designs. A FPU implements limited arithmetic operations on floating-point numbers. Since many smaller computer implementations do not provide a FPU, they need to emulate floating-point arithmetic either via software library, or by using a sequence of integer operations. Both of these emulation methods are comparatively very time-consuming, so dedicated FPUs are highly advantageous for applications leaning on floating-point math for critical high-speed functions. Some computers may also offer interfaces to external FPUs as expansions.
+
+#### Input/Output (I/O)
+
+With respect to a computer's systems, input/output interfaces can be both to internal logic devices (outside of the CPU, but still within the integrated circuit), or external devices / signals / systems. Typically, I/O is handled by dedicated data buses and clock signals. In many architecture implementations, the CPU has a singular bus that handles all I/O to and from the CPU, so any attached devices must have an interface compatible with the main bus.
+
+#### Control Unit
+
+The faculty tying together all of a computer's functions is the **Control Unit**. The control unit is responsible for execution of any program instructions. To do so, it tracks program operation and routes signals as instructed. For instance, if the current program instruction commands addition of two numbers, the control unit will select the correct ALU opcode, load the signals for the operands, signal the computation, and place the result in the correct location. For instructions requiring interaction with other subsystems, the control unit routes the data accordingly.
+
+For computer systems, the term **Instruction** describes a very specific piece of information. Instructions are commands that can be broken into two sections: an **opcode** that describes the command functionality as a binary number, and one or more **operands** that the operation will do work on. Unlike the ALU's opcode and operands, however, the instruction opcode and operands are contained in a single bitfield, which typically matches the machine's word bit width. For example, for a 16-bit instruction with four-bit opcode, an ADD instruction could look like the following:
+
+| Bit: | 15 14 13 12 | 11 10 09 | 8 7 6 | 5 | 4 | 3 | 2 1 0 |
+|-|-|-|-|-|-|-|-|
+| Meaning: | ADD opcode | result register | operand A register | 0 | 0 | 0 | operand B register  |
+
+_For this example, assuming the add opcode is 0000, and the instruction loads from registers 0 and 1 to store the result in register 2, the full bit sequence for this instruction would be: 0000010000000001._
+
+The control unit makes the assumption that instructions are laid out sequentially in the program memory area - that after completing the instruction at index 0, it can proceed to instruction at index 1, etc. Therefore, for simple operations, the control unit can track program operation with two registers: the **Instruction Register** and **Program Counter**. The instruction register stores the full instruction being executed, while the program counter holds the address of the _next_ instruction to execute. Some instructions are capable of changing the program counter value (and therefore the next instruction). The act of conditionally changing the program counter is known as **branching**; one conditional result produces operation sequence A, and another produces sequence B - a metaphorical fork in a road, or branch in a tree. Similarly, the act of unconditionally changing the program counter is known as **jumping**.
+
+The control unit also follows a very strict order of operations for following instructions (which can be modeled as a finite state machine) called the **Instruction Cycle**:
+1) **Fetch**: The control unit loads the next instruction from program memory. The program counter is used to identify the program address to fetch, and the instruction register is updated to indicate the new instruction to operate with. For some implementations, the program counter value is immediately incremented by one.
+2) **Decode**: The control unit identifies the instruction's opcode, and then uses a multiplexer to select the single control line associated with the operation. The control unit then identifies any other operands needed. If memory access is required, the control unit computes the addresses necessary to load or store. If any operands are stored in registers instead of memory, the operands are then obtained (signals connected).
+3) **Execute**: The control unit then sends command signals for the appropriate operation (typically to the ALU), identifies, and stores the result of the operation in the correct location.
+4) **Repeat**: The control unit moves to the next instruction (step 1).
+
+More advanced architectures do have additional stages added to this cycle to handle cases of changing control flow (which we will discuss later). There are also ways to improve the speed of instruction execution by leveraging parallelism in the instruction pipeline, among other approaches, but these optimizations are beyond the scope of our current discussion.
 
 ### Computer Programming Interface
 
