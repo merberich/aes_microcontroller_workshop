@@ -746,14 +746,47 @@ The control unit also follows a very strict order of operations for following in
 3) **Execute**: The control unit then sends command signals for the appropriate operation (typically to the ALU), identifies, and stores the result of the operation in the correct location.
 4) **Repeat**: The control unit moves to the next instruction (step 1).
 
-More advanced architectures do have additional stages added to this cycle to handle cases of changing control flow (which we will discuss later). There are also ways to improve the speed of instruction execution by leveraging parallelism in the instruction pipeline, among other approaches, but these optimizations are beyond the scope of our current discussion.
+The control unit transitions to the next state on each tick of the clock cycle. More advanced architectures do have additional stages added to this cycle to handle cases of changing control flow (which we will discuss later). There are also ways to improve the speed of instruction execution by leveraging parallelism in the instruction pipeline, among other approaches, but these optimizations are beyond the scope of our current discussion.
 
 ### Computer Programming Interface
 
-`@todo instruction set architecture`
-`@todo common operations coverage`
-`@todo briefly cover assembly`
-`@todo demo with webassembly (?)`
+Now that we have an architectural understanding of how a computer functions (and the necessary logic structures necessary to create those faculties), we can move to understanding how to efficiently program them. As discussed, instructions are the main method of communicating sequential commands to the computer, and I/O is the method the computer uses to procedurally interface with other systems.
+
+#### Instruction Set Architecture
+
+If program memory and instructions act as the programming interface for a computer, then the **Instruction Set Architecture** is the collection of all unique instructions (and their formatting) available to the programmer. The instructions a computer designer chooses to expose also affects (or necessitates) certain functionality within the machine - therefore the instruction set is intimately tied to the machine it is designed for. Generally, all instructions for a single machine use a uniform length opcode, and flexibly sized operands (depending on the operation). Some architectures may choose to have options for multi-word instructions, or flexibly-sized operands, but for complexity's sake we will not be exploring these decisions.
+
+Instruction sets are typically comprised of three different types of instructions: computation, data movement, and control. Computational instructions perform arithmetic or logical operations between input variables. Data movement involves loading or storing registers, memory, or I/O interfaces. Control instructions change the sequence of instructions that will be evaluated next, typically by conditional or unconditional program counter changes.
+
+Easy-to-learn instruction set architectures (and their equivalent machines) include the [LC-3](http://cs.iit.edu/~khale/class/cs350/s17/handout/patt-patel-ch5.pdf) ([simulator here](https://wchargin.github.io/lc3web/)), and [MIPS](https://www.ece.lsu.edu/ee4720/mips64v1.pdf). More modern (and prevalently used) instruction sets include AVR, ARM, x86, and now RISC-V.
+
+#### Assembly Language
+
+Up to this point, instructions have been defined purely by their format within a bitfield - as **Machine Language**, or the format that can be natively understood by the target computer. Working with this format proves cumbersome for humans (who wants to translate functionality to binary representation all day?), so demand has existed to provide a machine code representation that is more human-interpretable. **Assembly Language** is a format which represent opcodes and operand addresses as human-readable text.
+
+<img src="res/joke-assembly.jpg" title="Source: Unknown arcane meme database.">
+
+_Without assembly, programmers' keyboards would look like this. Relevant [xkcd](https://xkcd.com/378/)._
+
+As its own language, Assembly has a particular syntax: a grammar of language-reserved words, and where they are acceptably used to form coherent commands. To make tracking opcodes easier, Assembly denotes opcodes with three or four letter mnemonics. Likewise, managing operands is also made much more flexible: Assembly can reference data stored as part of the program memory (direct), stored in an address with a relative offset to the current program counter (indirect), via an address stored in a register (effective address), or via an offset from an address stored in a register (base + offset). Within Assembly-formatted code files, it is possible to label specific lines of command to refer to the program memory address where they will be stored (to reference later).
+
+Assembly is converted into machine code via an external program / machine called an **Assembler**. The assembler translates opcodes and calculates real addresses after being fed a complete source code written in Assembly format. The machine code can then be stored directly in program non-volatile memory, with any referenced data stored in data non-volatile memory. Since the assembler is also tied directly to the instruction set architecture of a target machine, it is often provided by the computer designer.
+
+_Demo: Assembly "hello world" code via [codingground](https://www.tutorialspoint.com/compile_assembly_online.php)._
+
+For better coverage of assembly, I would highly recommend this [tutorialspoint series](https://www.tutorialspoint.com/assembly_programming/index.htm).
+
+#### Common but Optional Computer Features
+
+The vast majority of computers today operate on the stack model. In computer science, a **Stack** is a representation of a collection of objects where it is only possible to access the last object added at any given time (a _last-in = first-out / LIFO_ representation). Generally, stacks support "push", and "pop" operations to add or remove (respectively) items from the stack.
+
+<img src="res/diagram-stack.png" title="Source: https://en.wikipedia.org/wiki/File:Lifo_stack.png" width="80%">
+
+Stack operations are advantageous because they can be represented by bitfields within the machine (faster access than memory, on par with registers - especially when implemented using them). So, while performing a complex operation, Assembly code can call specific instructions to push data to the stack (to reference later in the operation). This functionality is especially useful when there are a limited number of operational registers to use, but the program requires more fast-access working memory.
+
+More so, however, stacks are useful for enabling programmers to represent subroutines. A **Subroutine** is a collection of commands that perform one task, that can be reused by referencing them indirectly (via a name) in multiple places within code. To invoke a subroutine is to "call" it. Calling a subroutine requires saving the state of the machine, jumping to a new program counter location (where the subroutine is stored in program memory), and running each command within the subroutine, before returning to the instruction following the subroutine call. For machines supporting stack-based subroutines, the subroutine call can be represented with a **Stack Frame**. The stack frame includes the program counter value for the instruction following the subroutine call, the index of the top of the stack prior to the call, and any values needed by the subroutine (or any generated by the subroutine during the call). After the subroutine completes, the entire stack frame is removed from the stack, and the computer's state machine prior to the call is restored. In some cases where subroutines end in result data, machines may communicate these results by leaving them on the stack in place of the stack frame, after the call completes (while others may leave the result in registers).
+
+Stack machines are so powerful, in fact, that a modern development called [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly/Understanding_the_text_format) (a purely virtual machine capable of running the browser) exposes an instruction set + Assembly implementation based entirely around the stack (no registers).
 
 [Index](#contents)
 
