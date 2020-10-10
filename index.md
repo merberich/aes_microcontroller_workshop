@@ -10,7 +10,8 @@
 - [Electronics](#electronics)
 - [Digital Logic](#digital-logic)
 - [Binary Number Theory](#binary-number-theory)
-- [Computer Elements and Architecture](#computer-elements-and-architecture)
+- [Computer Elements](#computer-elements)
+- [Computer Architecture](#computer-architecture)
 - [High-Level Language Programming (with C)](#high-level-language-programming-with-c)
 - [Microcontroller Hands-On](#microcontroller-hands-on)
 
@@ -526,9 +527,11 @@ Note: a right-shift is equivalent to multiplying the value by two, and a left-sh
 [Index](#contents)
 
 
-## Computer Elements and Architecture
+## Computer Elements
 
 Now that we have a theories to represent digital logic and binary numbers (which we can bring to reality by use of electrical circuits), if we want that system to accomplish practical, complex tasks, we need to organize it to do so. This section will describe the fundamental elements (composed of logic gates) used to develop the hierarchy of functionality we call a "computer".
+
+Computer elements generally serve the purpose of storing, transmitting, or operating on either binary numbers or raw bits. For practical purposes, this workshop will only cover a handful of possible of these "building blocks" for computers.
 
 ### Finite State Machines
 
@@ -549,11 +552,7 @@ The equivalent transition diagram could look like the following:
 
 FSMs are also particularly useful when developing new systems as a means of exploring behavioral requirements and checking validity of behavior.
 
-### Computer Elements
-
-Computer elements generally serve the purpose of storing, transmitting, or operating on either binary numbers or raw bits. For practical purposes, this workshop will only cover a handful of possible of these "building blocks" for computers.
-
-#### Latches, Registers, and Memory
+### Latches, Registers, and Memory
 
 One of the simplest ways to store data is called a **Flip-Flop, or Latch**. A latch is a computer element capable of storing the state of one bit.
 
@@ -609,7 +608,7 @@ Another way to store binary information would be in the form of **Memory**, whic
 
 Memory can be further divided into two categories: **Volatile Memory**, in which values in memory are kept only as long as the circuit has power, and **Non-Volatile Memory**, in which stored values are preserved even after loss of power.
 
-#### Multiplexers, Demultiplexers
+### Multiplexers, Demultiplexers
 
 A **Multiplexer (Mux)** is a computer element which selects and outputs one bit from a set of parallel input data lines. A **Demultiplexer (Demux)** does precisely the opposite: given one input, it selects one out of many possible output lines to connect to the input. A four-to-one mux would have the following truth table:
 
@@ -625,7 +624,7 @@ A **Multiplexer (Mux)** is a computer element which selects and outputs one bit 
 
 <img src="res/elem-4-1-mux.png" title="Source: https://en.wikipedia.org/wiki/File:Multiplexer_4-to-1.svg" width="300px">
 
-#### Arithmetic Operation: Adders
+### Arithmetic Operation: Adders
 
 <div width="40%" style="float:left; margin-right:10px;">
 
@@ -654,7 +653,7 @@ A full adder takes the sum of just two bits, however. To take the sum of two \(n
 
 There are many other implementations of both arithmetic and logical operators in practice. More operators will be discussed later.
 
-#### Timers, Counters, and Clocking
+### Timers, Counters, and Clocking
 
 One major problem in the construction of digital logic circuits is synchronization - making sure that all relevant changes in line levels are accounted for, rather than skipped or double-counted. One of the most common ways to deal with synchronization is to include a **clock signal**, which is used to step multiple computer elements simultaneously. A clock signal is one that oscillates between high and low at a deterministic rate. It is effectively a timekeeping device: anything connected to the clock signals steps in time with one edge of the clock as it toggles.
 
@@ -670,7 +669,10 @@ For example, a three-bit up-counter can be implemented with three positive edge 
 
 Finally, now that we can determine the amount of time that has elapsed since the last counter reset, it is possible to use this information to trigger events. A module that can send signals based on the status of a counter is known as a **Timer**. A simple implementation of a timer could maintain a target register and counter, and after each clock step, perform a bitwise equality check between the target register and counter value. The timer could then optionally trigger different events for counter overflow/return to zero, or a match on the comparison with the target register and counter value.
 
-### Computer Architecture
+[Index](#contents)
+
+
+## Computer Architecture
 
 With theoretical understanding of how logic circuits behave and can be combined into functional structures, we can now finally define what a computer is. A **Computer** is any machine that stores, retrieves, and processes data _automatically_; that is, it can be instructed to perform sequences of arithmetic or logical operations, and it will carry out those operations with no further input.
 
@@ -691,6 +693,8 @@ Most modern processor designs (including AVR, ARM, and x86) follow a **Modified 
 _von Neumann Architecture (left) vs Harvard Architecture (right)_
 
 Now that we have a reasonable outline of the components that describe a computer, we can talk about their operations in detail.
+
+### Functional Computer Components
 
 #### Memory
 
@@ -788,10 +792,14 @@ More so, however, stacks are useful for enabling programmers to represent subrou
 
 Stack machines are so powerful, in fact, that a modern development called [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly/Understanding_the_text_format) (a purely virtual machine capable of running the browser) exposes an instruction set + Assembly implementation based entirely around the stack (no registers).
 
+For a fairly long time after its development, Assembly was the primary mode of programming computers. In some cases (performance-critical code, novel hardware development, compilers), assembly programming is still key.
+
 [Index](#contents)
 
 
 ## High-Level Language Programming (with C)
+
+
 
 `@todo organize and write this`
 
