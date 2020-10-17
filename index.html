@@ -275,6 +275,7 @@ pre[data-line] .line-highlight[data-end]:after {
 <li><a href="#computer-architecture">Computer Architecture</a></li>
 <li><a href="#high-level-language-programming-with-c">High-Level Language Programming (with C)</a></li>
 <li><a href="#microcontroller-hands-on">Microcontroller Hands-On</a></li>
+<li><a href="#application-midi-controller-project">Application: MIDI Controller Project</a></li>
 </ul>
 <h2 class="mume-header" id="introduction">Introduction</h2>
 
@@ -1164,6 +1165,133 @@ LRSHIFT 1001
 <p>For example, a three-bit up-counter can be implemented with three positive edge triggered D flip-flops:</p>
 <img src="res/elem-counter.gif" title="Made via https://circuitverse.org/simulator">
 <p>Finally, now that we can determine the amount of time that has elapsed since the last counter reset, it is possible to use this information to trigger events. A module that can send signals based on the status of a counter is known as a <strong>Timer</strong>. A simple implementation of a timer could maintain a target register and counter, and after each clock step, perform a bitwise equality check between the target register and counter value. The timer could then optionally trigger different events for counter overflow/return to zero, or a match on the comparison with the target register and counter value.</p>
+<p><a href="#contents">Index</a></p>
+<h2 class="mume-header" id="computer-architecture">Computer Architecture</h2>
+
+<p>With theoretical understanding of how logic circuits behave and can be combined into functional structures, we can now finally define what a computer is. A <strong>Computer</strong> is any machine that stores, retrieves, and processes data <em>automatically</em>; that is, it can be instructed to perform sequences of arithmetic or logical operations, and it will carry out those operations with no further input.</p>
+<p>In order to accomplish these tasks, a computer needs four essential components:</p>
+<ol>
+<li><strong>Memory</strong> in order to store and retrieve data and instructions</li>
+<li>A <strong>Processing Unit</strong> that can carry out logical and arithmetic operations</li>
+<li><strong>Input / Output (I/O)</strong> interfaces to send and receive signals from the world</li>
+<li>A <strong>Control Unit</strong> that route and interprets instructions and tracks program operation</li>
+</ol>
+<p>Typically, when we talk about the &quot;CPU&quot; of a computer (Central Processing Unit), we refer to the collective function of the control unit and the processing unit, though the term is somewhat muddied today.</p>
+<p>There are two main reference processor architectures which dictate how these primary components can be interconnected. In a <strong>von Neumann Architecture (aka Princeton Architecture)</strong>, there is a single bus that transfers both program information and operating data to/from a single memory area. Contrasting this is the <strong>Harvard Architecture</strong>, which splits memory into distinct program memory and data memory areas, and therefore has two different buses connecting to each of these memory areas.</p>
+<p>Most modern processor designs (including AVR, ARM, and x86) follow a <strong>Modified Harvard Architecture</strong>, where data and instructions can reside in the same memory area, but there are still two buses which communicate data vs instructions.</p>
+<img src="res/diagram-computer-architectures.jpg" title="Source: https://www.polytechnichub.com/wp-content/uploads/2017/04/Harvard-architecture-and-von-Neumann-architecture.jpg">
+<p><em>von Neumann Architecture (left) vs Harvard Architecture (right)</em></p>
+<p>Now that we have a reasonable outline of the components that describe a computer, we can talk about their operations in detail.</p>
+<h3 class="mume-header" id="functional-computer-components">Functional Computer Components</h3>
+
+<h4 class="mume-header" id="memory">Memory</h4>
+
+<p>As we&apos;ve previously discussed, <strong>Memory</strong> is a collection of addressable uniform-length bitfields that are accessible via generalized <strong>Load</strong> and <strong>Store</strong> operations. More formally, we can say that memory contains a <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mi>k</mi></msup></mrow><annotation encoding="application/x-tex">2^k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.849108em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.849108em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span></span></span></span></span></span></span></span></span></span></span> x <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">m</span></span></span></span> set of bits, where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">m</span></span></span></span> is the number of bits describing one piece of data (the data&apos;s bit length), and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span> is the number of bits needed to describe the index of the data (its address). Another way to think about memory schematically is as an indexed table of distinct pieces of information (which are all the same size).</p>
+<p>Example: 2-bit addressing for 8-bit data</p>
+<table>
+<thead>
+<tr>
+<th>Address</th>
+<th>Data</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>00</td>
+<td>xxxxxxxx</td>
+</tr>
+<tr>
+<td>01</td>
+<td>xxxxxxxx</td>
+</tr>
+<tr>
+<td>10</td>
+<td>xxxxxxxx</td>
+</tr>
+<tr>
+<td>11</td>
+<td>xxxxxxxx</td>
+</tr>
+</tbody>
+</table>
+<p>The architecture of different types of memory units varies based on their purpose: non-volatile memory is generally more complex than volatile memory. The simplest form of volatile memory is <strong>Random-Access Memory (RAM)</strong>, which allows access of any individual memory location at nearly uniform access speed. RAM forms the backbone of almost all computers today, and is the most common form of data memory (sometimes functioning as program memory after being loaded).</p>
+<p>The simplest implementation of RAM contains two registers and two signal lines. The <strong>Memory Address Register (MAR)</strong> (bit width <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span>) describes the address in RAM to target with the selected operation. Separate &quot;store&quot; and &quot;load&quot; signal lines tell the RAM implementation which operation to perform. If the &quot;store&quot; signal is selected (sent to logic high), the contents of the <strong>Memory Data Register (MDR)</strong> will be written to the memory address indicated by the MAR. If the &quot;load&quot; signal is selected, the memory contents at address indicated by the MAR will be copied into the MDR, which the computer can then read and interpret. In either case, the computer only interacts with the interface - not the internal hardware of the memory. There are other types of volatile memory useful to computer implementation (cache, DRAM, etc) that are outside the scope of current discussion.</p>
+<p>Program memory is typically implemented as non-volatile memory, but we will not go into implementation specifics here.</p>
+<h4 class="mume-header" id="processing-unit">Processing Unit</h4>
+
+<p>The <strong>Processing Unit</strong> within a CPU contains all faculties necessary to do logical, arithmetic, and (sometimes) floating-point operations.</p>
+<img src="res/schematic-alu.gif" title="Source: https://en.wikipedia.org/wiki/File:ALU_block.gif" width="40%" style="float:left; margin-right:10px;">
+<p>All processing units contain an <strong>Arithmetic Logic Unit (ALU)</strong> which implements common bitwise and integer arithmetic operators via logic gates. Commonly, ALU implementations are driven by four buses: operand A, operand B, opcode, and status. Operands A and B are the integer values that the ALU will operate on. The opcode bus value determines which operation the ALU will perform (the operation is encoded as a binary value). The status input bus indicates any secondary result from a previous operation, which may be relevant to the current operation (i.e. a carry value for addition). Likewise, the ALU typically exposes two output buses: one indicating the status for the current operation, and one for the operation&apos;s result. The ALU data bus width is the bit width of one <strong>Word</strong>: the bit width describing the size of an integer on the machine.</p>
+<p>Processing units may also provide several internal multipurpose registers. Their utility is in the fact that accessing these internal registers is considerably faster than needing to pull information from memory when working with simple calculations. Naturally, these registers are also the word size of the machine, since they can supply inputs or store the result calculated via the ALU.</p>
+<p>Lastly, the processing unit may contain an internal <strong>Floating-Point Unit (FPU)</strong>, in the case of many high-performance designs. A FPU implements limited arithmetic operations on floating-point numbers. Since many smaller computer implementations do not provide a FPU, they need to emulate floating-point arithmetic either via software library, or by using a sequence of integer operations. Both of these emulation methods are comparatively very time-consuming, so dedicated FPUs are highly advantageous for applications leaning on floating-point math for critical high-speed functions. Some computers may also offer interfaces to external FPUs as expansions.</p>
+<h4 class="mume-header" id="inputoutput-io">Input/Output (I/O)</h4>
+
+<p>With respect to a computer&apos;s systems, input/output interfaces can be both to internal logic devices (outside of the CPU, but still within the integrated circuit), or external devices / signals / systems. Typically, I/O is handled by dedicated data buses and clock signals. In many architecture implementations, the CPU has a singular bus that handles all I/O to and from the CPU, so any attached devices must have an interface compatible with the main bus.</p>
+<h4 class="mume-header" id="control-unit">Control Unit</h4>
+
+<p>The faculty tying together all of a computer&apos;s functions is the <strong>Control Unit</strong>. The control unit is responsible for execution of any program instructions. To do so, it tracks program operation and routes signals as instructed. For instance, if the current program instruction commands addition of two numbers, the control unit will select the correct ALU opcode, load the signals for the operands, signal the computation, and place the result in the correct location. For instructions requiring interaction with other subsystems, the control unit routes the data accordingly.</p>
+<p>For computer systems, the term <strong>Instruction</strong> describes a very specific piece of information. Instructions are commands that can be broken into two sections: an <strong>opcode</strong> that describes the command functionality as a binary number, and one or more <strong>operands</strong> that the operation will do work on. Unlike the ALU&apos;s opcode and operands, however, the instruction opcode and operands are contained in a single bitfield, which typically matches the machine&apos;s word bit width. For example, for a 16-bit instruction with four-bit opcode, an ADD instruction could look like the following:</p>
+<table>
+<thead>
+<tr>
+<th>Bit:</th>
+<th>15 14 13 12</th>
+<th>11 10 09</th>
+<th>8 7 6</th>
+<th>5</th>
+<th>4</th>
+<th>3</th>
+<th>2 1 0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Meaning:</td>
+<td>ADD opcode</td>
+<td>result register</td>
+<td>operand A register</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>operand B register</td>
+</tr>
+</tbody>
+</table>
+<p><em>For this example, assuming the add opcode is 0000, and the instruction loads from registers 0 and 1 to store the result in register 2, the full bit sequence for this instruction would be: 0000010000000001.</em></p>
+<p>The control unit makes the assumption that instructions are laid out sequentially in the program memory area - that after completing the instruction at index 0, it can proceed to instruction at index 1, etc. Therefore, for simple operations, the control unit can track program operation with two registers: the <strong>Instruction Register</strong> and <strong>Program Counter</strong>. The instruction register stores the full instruction being executed, while the program counter holds the address of the <em>next</em> instruction to execute. Some instructions are capable of changing the program counter value (and therefore the next instruction). The act of conditionally changing the program counter is known as <strong>branching</strong>; one conditional result produces operation sequence A, and another produces sequence B - a metaphorical fork in a road, or branch in a tree. Similarly, the act of unconditionally changing the program counter is known as <strong>jumping</strong>.</p>
+<p>The control unit also follows a very strict order of operations for following instructions (which can be modeled as a finite state machine) called the <strong>Instruction Cycle</strong>:</p>
+<ol>
+<li><strong>Fetch</strong>: The control unit loads the next instruction from program memory. The program counter is used to identify the program address to fetch, and the instruction register is updated to indicate the new instruction to operate with. For some implementations, the program counter value is immediately incremented by one.</li>
+<li><strong>Decode</strong>: The control unit identifies the instruction&apos;s opcode, and then uses a multiplexer to select the single control line associated with the operation. The control unit then identifies any other operands needed. If memory access is required, the control unit computes the addresses necessary to load or store. If any operands are stored in registers instead of memory, the operands are then obtained (signals connected).</li>
+<li><strong>Execute</strong>: The control unit then sends command signals for the appropriate operation (typically to the ALU), identifies, and stores the result of the operation in the correct location.</li>
+<li><strong>Repeat</strong>: The control unit moves to the next instruction (step 1).</li>
+</ol>
+<p>The control unit transitions to the next state on each tick of the clock cycle. More advanced architectures do have additional stages added to this cycle to handle cases of changing control flow (which we will discuss later). There are also ways to improve the speed of instruction execution by leveraging parallelism in the instruction pipeline, among other approaches, but these optimizations are beyond the scope of our current discussion.</p>
+<h3 class="mume-header" id="computer-programming-interface">Computer Programming Interface</h3>
+
+<p>Now that we have an architectural understanding of how a computer functions (and the necessary logic structures necessary to create those faculties), we can move to understanding how to efficiently program them. As discussed, instructions are the main method of communicating sequential commands to the computer, and I/O is the method the computer uses to procedurally interface with other systems.</p>
+<h4 class="mume-header" id="instruction-set-architecture">Instruction Set Architecture</h4>
+
+<p>If program memory and instructions act as the programming interface for a computer, then the <strong>Instruction Set Architecture</strong> is the collection of all unique instructions (and their formatting) available to the programmer. The instructions a computer designer chooses to expose also affects (or necessitates) certain functionality within the machine - therefore the instruction set is intimately tied to the machine it is designed for. Generally, all instructions for a single machine use a uniform length opcode, and flexibly sized operands (depending on the operation). Some architectures may choose to have options for multi-word instructions, or flexibly-sized operands, but for complexity&apos;s sake we will not be exploring these decisions.</p>
+<p>Instruction sets are typically comprised of three different types of instructions: computation, data movement, and control. Computational instructions perform arithmetic or logical operations between input variables. Data movement involves loading or storing registers, memory, or I/O interfaces. Control instructions change the sequence of instructions that will be evaluated next, typically by conditional or unconditional program counter changes.</p>
+<p>Easy-to-learn instruction set architectures (and their equivalent machines) include the <a href="http://cs.iit.edu/~khale/class/cs350/s17/handout/patt-patel-ch5.pdf">LC-3</a> (<a href="https://wchargin.github.io/lc3web/">simulator here</a>), and <a href="https://www.ece.lsu.edu/ee4720/mips64v1.pdf">MIPS</a>. More modern (and prevalently used) instruction sets include AVR, ARM, x86, and now RISC-V.</p>
+<h4 class="mume-header" id="assembly-language">Assembly Language</h4>
+
+<p>Up to this point, instructions have been defined purely by their format within a bitfield - as <strong>Machine Language</strong>, or the format that can be natively understood by the target computer. Working with this format proves cumbersome for humans (who wants to translate functionality to binary representation all day?), so demand has existed to provide a machine code representation that is more human-interpretable. <strong>Assembly Language</strong> is a format which represent opcodes and operand addresses as human-readable text.</p>
+<img src="res/joke-assembly.jpg" title="Source: Unknown arcane meme database.">
+<p><em>Without assembly, programmers&apos; keyboards would look like this. Relevant <a href="https://xkcd.com/378/">xkcd</a>.</em></p>
+<p>As its own language, Assembly has a particular syntax: a grammar of language-reserved words, and where they are acceptably used to form coherent commands. To make tracking opcodes easier, Assembly denotes opcodes with three or four letter mnemonics. Likewise, managing operands is also made much more flexible: Assembly can reference data stored as part of the program memory (direct), stored in an address with a relative offset to the current program counter (indirect), via an address stored in a register (effective address), or via an offset from an address stored in a register (base + offset). Within Assembly-formatted code files, it is possible to label specific lines of command to refer to the program memory address where they will be stored (to reference later).</p>
+<p>Assembly is converted into machine code via an external program / machine called an <strong>Assembler</strong>. The assembler translates opcodes and calculates real addresses after being fed a complete source code written in Assembly format. The machine code can then be stored directly in program non-volatile memory, with any referenced data stored in data non-volatile memory. Since the assembler is also tied directly to the instruction set architecture of a target machine, it is often provided by the computer designer.</p>
+<p><em>Demo: Assembly &quot;hello world&quot; code via <a href="https://www.tutorialspoint.com/compile_assembly_online.php">codingground</a>.</em></p>
+<p>For better coverage of assembly, I would highly recommend this <a href="https://www.tutorialspoint.com/assembly_programming/index.htm">tutorialspoint series</a>.</p>
+<h4 class="mume-header" id="common-but-optional-computer-features">Common but Optional Computer Features</h4>
+
+<p>The vast majority of computers today operate on the stack model. In computer science, a <strong>Stack</strong> is a representation of a collection of objects where it is only possible to access the last object added at any given time (a <em>last-in = first-out / LIFO</em> representation). Generally, stacks support &quot;push&quot;, and &quot;pop&quot; operations to add or remove (respectively) items from the stack.</p>
+<img src="res/diagram-stack.png" title="Source: https://en.wikipedia.org/wiki/File:Lifo_stack.png" width="80%">
+<p>Stack operations are advantageous because they can be represented by bitfields within the machine (faster access than memory, on par with registers - especially when implemented using them). So, while performing a complex operation, Assembly code can call specific instructions to push data to the stack (to reference later in the operation). This functionality is especially useful when there are a limited number of operational registers to use, but the program requires more fast-access working memory.</p>
+<p>More so, however, stacks are useful for enabling programmers to represent subroutines. A <strong>Subroutine</strong> is a collection of commands that perform one task, that can be reused by referencing them indirectly (via a name) in multiple places within code. To invoke a subroutine is to &quot;call&quot; it. Calling a subroutine requires saving the state of the machine, jumping to a new program counter location (where the subroutine is stored in program memory), and running each command within the subroutine, before returning to the instruction following the subroutine call. For machines supporting stack-based subroutines, the subroutine call can be represented with a <strong>Stack Frame</strong>. The stack frame includes the program counter value for the instruction following the subroutine call, the index of the top of the stack prior to the call, and any values needed by the subroutine (or any generated by the subroutine during the call). After the subroutine completes, the entire stack frame is removed from the stack, and the computer&apos;s state machine prior to the call is restored. In some cases where subroutines end in result data, machines may communicate these results by leaving them on the stack in place of the stack frame, after the call completes (while others may leave the result in registers).</p>
+<p>Stack machines are so powerful, in fact, that a modern development called <a href="https://developer.mozilla.org/en-US/docs/WebAssembly/Understanding_the_text_format">WebAssembly</a> (a purely virtual machine capable of running the browser) exposes an instruction set + Assembly implementation based entirely around the stack (no registers).</p>
+<p>For a fairly long time after its development, Assembly was the primary mode of programming computers. In some cases (performance-critical code, novel hardware development, compilers), assembly programming is still key.</p>
 <p><a href="#contents">Index</a></p>
 
       </div>

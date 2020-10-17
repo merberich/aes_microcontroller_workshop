@@ -14,6 +14,7 @@
 - [Computer Architecture](#computer-architecture)
 - [High-Level Language Programming (with C)](#high-level-language-programming-with-c)
 - [Microcontroller Hands-On](#microcontroller-hands-on)
+- [Application: MIDI Controller Project](#application-midi-controller-project)
 
 <!-- /TOC -->
 
@@ -799,15 +800,55 @@ For a fairly long time after its development, Assembly was the primary mode of p
 
 ## High-Level Language Programming (with C)
 
+So: we have our programmable machine, and a way to program it. Why do we need anything else?
 
+**Assembly has fundamental limitations.**
 
-`@todo organize and write this`
+Immediate branch and instructions have a limited number of bytes that can be used to represent addresses to replace the program counter with. If the code gets large enough, locations may become unreachable by existing statements, meaning addresses need to be recalculated and a temporary branch becomes necessary.
+
+**Programming large software applications in Assembly is very difficult.**
+
+When Assembly was first created, programming was a nascent field that inherited most of its development patterns from other engineering domains (electrical, mechanical). This means that development was all intentionally planned, and even the slightest mistake could set back development for months. Increasing the complexity of the software application meant risking massive delays.
+
+**Assembly is not portable.**
+
+Assembly is not an easy language to master. Developers were a costly investment, especially when the language needed to be re-learned for each new machine target.
+
+The solution to these main problems was to develop a series of "high level" programming languages that could be translated to Assembly, which could then in turn be assembled into machine code. C was not the first of these languages (yes, there was a "B" language), but it does remain the most popular of the systems programming languages developed at the time, especially in the embedded systems industry.
+
+### How C Integrates with the Computer
+
+`@todo compiler, linker, "translation unit", precompiler statements`
+`@todo core organization: .h vs .c`
+
+_Demo: Online compiler via [OnlineGDB](https://www.onlinegdb.com/online_c_compiler)_
+
+### Mechanics of C
+
+`@todo data types, variables + literals, operators`
+`@todo storage classes and scope`
+`@todo functions, call stack`
+`@todo pointers and arrays`
+`@todo loops and conditionals`
+`@todo structs, typedef`
 
 [Index](#contents)
 
 
 ## Microcontroller Hands-On
 
-`@todo organize and write this`
+`@todo organize the below into sections`
+
+`@todo definition of a microcontroller`
+`@todo reading datasheets`
+`@todo additions to architecture: clocking, power, interrupts, watchdog, peripherals`
+`@todo software development tools: ICSP, debugger, bootloaders`
+
+[Index](#contents)
+
+
+## Application: MIDI Controller Project
+
+`@todo figure this out`
 
 [Index](#contents)
