@@ -808,29 +808,628 @@ Immediate branch and instructions have a limited number of bytes that can be use
 
 **Programming large software applications in Assembly is very difficult.**
 
-When Assembly was first created, programming was a nascent field that inherited most of its development patterns from other engineering domains (electrical, mechanical). This means that development was all intentionally planned, and even the slightest mistake could set back development for months. Increasing the complexity of the software application meant risking massive delays.
+When Assembly was first created, programming was a nascent field that inherited most of its development patterns from other engineering domains (electrical, mechanical). This means that development was all intentionally planned, and even the slightest mistake could set back development for months. Increasing the complexity of the software application meant risking massive delays. By the same token, it is incredibly difficult to write Assembly for some function without doing intentional planning.
 
 **Assembly is not portable.**
 
-Assembly is not an easy language to master. Developers were a costly investment, especially when the language needed to be re-learned for each new machine target.
+Assembly is not an easy language to master. Developers are a costly investment, especially when the language needs to be re-learned for each new machine target.
 
-The solution to these main problems was to develop a series of "high level" programming languages that could be translated to Assembly, which could then in turn be assembled into machine code. C was not the first of these languages (yes, there was a "B" language), but it does remain the most popular of the systems programming languages developed at the time, especially in the embedded systems industry.
+The solution to these problems was to develop a set of "high-level" languages, called so because they were even more abstracted away from the machine than Assembly. The C language is one of these "high-level" languages. It was not the first created (yes, there was a "B" language), but it does remain the most popular, especially for developing operating systems (like Linux) and in embedded systems and microcontroller applications.
 
-### How C Integrates with the Computer
+### C Syntax and Capabilities
 
-`@todo compiler, linker, "translation unit", precompiler statements`
-`@todo core organization: .h vs .c`
+The C language provides considerably more features to programmers than Assembly. Namely, C provides structure (new control flow commands), data scoping (where data can be visible from), and data typing (classification of data into different formats). In order to provide this new functionality, the syntax (grammatical rules of what forms valid commands) of C is more complex than Assembly.
+
+#### Variables and Primitive Types
+
+One of the primary features offered by C is the ability to assign meaning to data itself, rather than imply meaning through the kind of operation performed (as Assembly does). We call this meaning associated with the data a **Data Type**. Data types define the bit-arrangement corresponding to some mapped value. This also implies that the data type has some fixed size, so instead of referring to data by address calculations (as in Assembly), we can now refer to some data directly as **Variables**.
+
+The basic data types natively supported by C are called the **Primitive Types**, listed below:
+- `void`: A variable of type `void` means it has no assigned type and no value (and therefore no size in memory).
+- `char`: A variable of type `char` (or "character") contains the smallest number of bits that can represent a basic character set ([ASCII](http://www.asciitable.com/)). On almost all systems, a `char` is 8 bits (one byte).
+- `short` / `short int`: A variable of type `short` or `short int` is an integer at least 16 bits long. On almost all systems, a `short` is 16 bits (two bytes).
+- `int`: A variable of type `int` is an integer at least 16 bits long. On almost all systems, an `int` is 32 bits long.
+- `long` / `long int`: A variable of type `long` or `long int` is an integer at least 32 bits long.  On some systems, `long` represents 32-bit integers, and on others, it represents 64-bit integers.
+- `long long` / `long long int`: A variable of type `long long` or `long long int` is an integer at least 64 bits long. On some systems, `long long` represents 64-bit integers, and on others, it represents 128-bit integers.
+- `float`: A `float` represents an [IEEE754 single-precision (32-bit) floating point number](https://en.wikipedia.org/wiki/Single-precision_floating-point_format).
+- `double`: A `double` represents an [IEEE754 double-precision (64-bit) floating point number](https://en.wikipedia.org/wiki/Double-precision_floating-point_format).
+- `long double`: A `long double` has different meanings on different machines, but is guaranteed to have floating-point precision [above double precision](https://en.wikipedia.org/wiki/Extended_precision).
+
+For the integer and character types, C also provides the `signed` and `unsigned` modifiers. Note that it is not usually necessary to specify that a value is "signed"; in C, all integral types (except char) are by default signed.
+
+In practice, variables with unknown actual length are not useful. A standard extension to the C language which is commonly used in embedded systems and network programming adds standard-sized integral types: `uint8_t`, `uint16_t`, `uint32_t`, and `uint64_t` represent the unsigned integers of 8-bit, 16-bit, 32-bit, and 64-bit length, and `int8_t`, `int16_t`, `int32_t`, and `int64_t` represent the signed integers of the same sizes. So, in practice, the primitive data types commonly encountered are:
+- `void`
+- `char` (unsigned by default)
+- `uint8_t` / `uint16_t` / `uint32_t` / `uint64_t`
+- `int8_t` / `int16_t` / `int32_t` / `int64_t`
+- `float`
+- `double`
+
+When we state that a variable exists, we _declare_ the variable. When we associate space in memory at a particular location for a variable, it is said that we _define_ the variable. When we assign a value to a variable for the first time, it is said that we _initialize_ the variable. After we declare a variable, we cannot redefine it (or use the same name for a different data type) elsewhere. In C, variable declaration has format:
+```
+<optional-modifier(s)> <data-type> <variable-name OR comma-separated-variable-name-list>;
+```
+Variable names can contain any alphanumeric character or underscore, but cannot start with a number. Variable names also must not be any of the reserved words in the C language (any token that already has meaning, discussed later). Also note the semicolon, which terminates the statement declaring the variable. In C, the semicolon must be used to punctuate any statements.
+
+_Some examples of variable declaration:_
+```C
+char _letter_;
+uint32_t something0, something1;
+float x, y, z;
+unsigned short uNsIgNeDsHoRt;
+```
+
+#### Operators and Literals
+
+Now that we have variables in which we can store data with fixed meaning, C exposes operators that we can use to access and modify the data. The operators C exposes are as follows:
+
+| Operator Type | Operator Name | Operator Symbol(s) | Example(s) | Description |
+|-|-|-|-|-|
+| Assignment | Assignment | `=` | `a = b;` | Assigns the value currently held in b to a. Variables a and b must have the same data type. If assignment is performed at variable definition, this is known as initialization. |
+| Arithmetic | Addition | `+` | `a + b;` | Yields the sum of two values. |
+| Arithmetic | Subtraction | `-` | `a - b;` | Yields the difference of two values. |
+| Arithmetic | Multiplication | `*` | `a * b;` | Yields the product of two values. |
+| Arithmetic | Division | `/` | `a / b;` | Yields the quotient of two values. |
+| Arithmetic | Modulus | `%` | `a % b` | Yields the remainder after performing integer division on "a" and "b". |
+| Arithmetic | Increment | `++` | `a++;` OR `++a;` | Post-increment (`a++`) yields the variable value and adds one after the full statement has been evaluated, while pre-increment (`++a`) first adds one to the variable value and then yields that value. |
+| Arithmetic | Decrement | `--` | `a--;` OR `--a;` | Post-decrement (`a--`) yields the variable value and subtracts one after the full statement has been evaluated, while pre-decrement (`--a`) first subtracts one from the variable value and then yields that value. |
+| Relational | Equality | `==` | `a == b;` | If both variables are equal in value, yield true (a nonzero value), otherwise returns yield (0). |
+| Relational | Non-equality | `!=` | `a != b;` | If both variables are equal in value, yield false (0), otherwise yield true (a nonzero value). |
+| Relational | Greater-Than | `>` | `a > b;` | If "a" has a more positive value than "b", yields true (nonzero value), otherwise yields false (0). |
+| Relational | Less-Than | `<` | `a < b;` | If "a" has a less positive value than "b", yields true (nonzero value), otherwise yields false (0). |
+| Relational | Greater-Than-or-Equal | `>=` | `a >= b;` | If "a" has a more positive value than (or the same value as) "b", yields true (nonzero value), otherwise yields false (0). |
+| Relational | Less-Than-or-Equal | `<=` | `a <= b;` | If "a" has a less positive value than (or the same value as) "b", yields true (nonzero value), otherwise yields false (0). |
+| Logical | Logical-AND | `&&` | `a && b;` | If both variables have nonzero value, yields true (nonzero value), otherwise yields false (0). |
+| Logical | Logical-OR | `||` | `a || b;` | If either "a" or "b" has a nonzero value, yields true (nonzero value), otherwise yields false (0). |
+| Logical | Logical-NOT | `!` | `!a;` | Yields the inverse value of the variable (true / nonzero if "a" is false, and vice-versa). |
+| Logical | Ternary | `?` | `a ? b : c;` | If "a" is nonzero, yield "b", otherwise yield "c". |
+| Bitwise | Bitwise-AND | `&` | `a & b;` | Yields the bitwise AND of both variables; for "a" and "b", if both variables have a "1" at a bit, the same bit is set in the output of the operation. |
+| Bitwise | Bitwise-OR | `|` | `a | b;` | Yields the bitwise OR of both variables; for "a" and "b", if either variable has a "1" at a bit, the same bit is set in the output of the operation. |
+| Bitwise | Bitwise-XOR | `^` | `a ^ b;` | Yields the bitwise XOR of both variables; for "a" and "b", if either (but not both) have a "1" at a bit, the same bit is set in the output of the operation. |
+| Bitwise | Bitwise-NOT | `~` | `~a;` | Yields the inverse of all bits in "a". |
+| Bitwise | Left Shift | `<<` | `a << b;` | Yields "a" shifted left "b" places. Zeroes are inserted at the least significant bits. |
+| Bitwise | Right Shift | `>>` | `a >> b;` | Yields "a" shifted right "b" places. If "a" is a signed type, inserts ones at each new most significant bit. If "a" is unsigned, inserts zeroes. |
+
+C also exposes modified assignment operators that perform arithmetic or bitwise operations before yielding assigning the final value. For example, the following pairs are equivalent statements:
+```C
+int a = 0, b = 1;
+a += b;
+a = a + b;
+
+a &= b;     // note: bitwise AND (not logical AND)
+a = a & b;
+```
+
+It is also possible for a variable to be declared with the `const` qualifier, which indicates that the variable's value should not be modifiable after it is initialized for the first time.
+
+Just like with regular arithmetic, there is a designated [**Order of Operations**](https://www.tutorialspoint.com/cprogramming/c_operators_precedence.htm) in C. At the same time, operation order can be enforced through use of parentheses:
+
+```C
+int a = 1;
+int b = 2;
+int c = 3;
+
+int v1 = a + b * c;    // v1 == 7
+int v2 = (a + b) * c;  // v2 == 9
+```
+
+#### Type Casting, Type Inference, Value Literals
+
+There are occasionally instances where it is useful to be able to interpret a variable as if it were another data type. To do so, the C language provides the mechanism called type casting. As C introduced the concept of data types, this feature has no direct analogue in Assembly.
+
+A **Typecast (Cast)**, treats as valid assignment of a variable of one type to a variable of a different type. Casts behave differently based on the types of information involved.
+
+For _compatible_ types (hold the same kind of data, i.e. integral vs floating-point):
+- If the variables hold the same number of bytes, the cast uses only the raw bit representation.
+- If assigning a smaller variable to a larger variable, the smaller variable will be _promoted_ (sign-extended and treated as the larger variable's size), and then assigned.
+- If assigning a larger variable to a smaller variable, the larger variable is truncated to the size of the smaller variable, and then assigned.
+
+For _incompatible_ types (hold different kinds of data):
+- If assigning a float to int, the float value is truncated to closest whole number to zero, and then assigned.
+- If assigning an int to float, the float is assigned the value closest to the whole number in the int.
+
+Casts can either be **Implicit** (handled directly as part of language rules), or **Explicit** (via dedicated syntax).
+
+Implicit casts occur automatically when assigning or operating on variables of differing types.
+```C
+uint8_t a = 0;  // in binary, all zeroes
+int8_t b = -1;  // in binary, all ones (using two's complement representation)
+
+a = b;  // implicit cast occurs, promoting signed integer to unsigned
+// note: value of "a" is now 255 (all ones, interpreted as unsigned)
+```
+
+Explicit casts occur via special syntax.
+```C
+int a = 1;
+int b = 2;
+float c = a / b;
+// a and b are both integers, so the division is integer division, which is then implicitly cast to float
+// c is therefore truncated to 0
+
+float d = (float) a / b;  // performing the explicit cast
+// a is now interpreted as a float
+// b is implicitly cast to a float since the division is now floating-point division, result is float
+// d is therefore 0.5
+```
+
+Note: it is possible to explicitly cast away a `const` qualifier, but implicit casts will fail when working with `const` variables.
+
+The last way to influence type inferencing is by specifying the data type when a variable is initialized. We call the form of the value assigned to a variable a _literal_.
+
+Forms of literals for integer values include:
+- Integer literal (no leading zero, numeric digits only): assumed to be a signed integer written as a decimal value, e.g. `30` = decimal 30
+- Octal literal (leading zero, numeric digits 0-7 only): assumed to be a signed integer written as an octal value (number in base 8), e.g. `017` = decimal 15
+- Hexadecimal literal (prefix "0x", characters 0-9 and A-F only): assumed to be a signed integer written as a hexadecimal value (number in base 16), e.g. `0x1A` = decimal 26
+
+For integer literals, it is also possible to specify values intended to be interpreted as unsigned by appending a suffix `u` to the end of the literal. Likewise, it is also possible to specify that a `long` is the default integral storage unit by appending a `l` to the end of a literal. For example, `0x1Aul`, even if it could fit into a signed 8-bit integer, would be treated as an unsigned long value.
+
+Forms of literals for floating point values include:
+- Decimal floating-point literal (radix point, no suffix): assumed to be a `double` written as a decimal value, i.e. `2.1` = decimal 2.1
+- Exponential floating-point literal (radix point, suffix `E`): assumed to be a `double` written as a decimal value in exponential notation, i.e. `4.0e-2` = decimal 2
+
+For floating point literals, it is also possible to specify values intended to be interpreted as `float` by appending suffix `f` to either literal form. Likewise, it is possible to specify a `long double` by appending suffix `l`.
+
+Character literals can be provided in single quotations, i.e. `'a'` = character a. Character literals can also represent special characters via "escape sequences", i.e. `'\t'` = horizontal tab character or `'\n'` = new line / line feed.
+
+String literals represent sequences of characters, followed by a byte containing all zeroes (the NULL character `\0`), i.e. `"Hello world!\n"` contains the sequence of characters for the statement "Hello world!" followed by the NULL character as a terminator.
+
+Using the correct literal in a specific situation can influence how type inferencing occurs:
+```C
+int a = 2;
+float b = 1.0f / a;
+// Literal "1.0f" evaluates as a float
+// a is implicitly cast to float
+// b is therefore 0.5
+```
+
+#### Conditionals, Loops, and Flow Control
+
+Like Assembly, C provides means of decision making and flow control, however, the syntax is more structured and rigid.
+
+**Decision-Making**
+
+Decision-making is still handled in basic cases by evaluation of a **Conditional Statement** (i.e. one that takes action if a statement is either true or false). There are two constructs that allow evaluation of conditional statements.
+
+The first is the ternary operator (also known as the conditional operator), which has been discussed:
+```C
+int a = 1;
+int b = 2;
+int c = 3;
+int d = a ? b : c;  // d == 2
+a = 0;
+d = a ? b : c;  // d == 3
+```
+
+The second method is the `if` statement or the `if` / `else` statement.
+```C
+int a = 0;
+int b = 0;
+if (a) {
+  // do things if a is true
+}
+else if (b) {
+  // do things if a is not true but b is true
+}
+else {
+  // do things if neither a nor b is true
+}
+
+if (a) {
+  // do things if a is true
+}
+// note: it's not necessary to have an "else" or an "if else" clause
+
+```
+
+Also worth of note: the conditional statements may be compound logic statements.
+```C
+int a = 0;
+int b = 1;
+if (a && !b) {
+  // do things if a is true and b is false
+}
+```
+
+The last method of decision making involves a more complex construct known as a `switch-case`. The statement given to a `switch-case` must be capable of being evaluated as an integer. The principle is that the `switch` statement determines an integer value for the operand and gives control to a `case` statement corresponding to only one possible integer value.
+```C
+int eval = 2;
+switch (eval) {
+  case 0:
+    // code under this "case" before the next "break" will be called
+    break;
+  case 1:
+  case 2:
+    // note case 1 has no "break", which means it will "fall through" into this case
+    // code here will be called if "eval" is either 0 or 1
+    break;
+  default:
+    // this case handles any value not already handled by the other cases
+    break;
+}
+```
+
+The ternary operator is particularly useful in cases where a concise expression is needed (i.e. as a conditional statement for some other evaluation), or to keep code short. The `if-else` clause is necessary when multiple statements are needed as responses to the conditional branch. Lastly, `switch-case` trees are useful for representing many simultaneous possibilities (which would otherwise need to be done in a large chain of nested `if-else` statements).
+
+**Repeated Action**
+
+C natively provides the ability to define areas of repeated statements, known as **Loops**. There are 3 loop types in C: the `while` loop, the `do-while` loop, and the `for` loop.
+
+The `while` loop simply repeats contained code while the evaluated condition statement is true. The conditional statement is evaluated before the body is run.
+```C
+int counter = 5;
+while (counter) {
+  // do something
+  counter--;  // decrement counter
+}
+// loop should run 5 times
+```
+
+The `do-while` loop is nearly identical to the `while` loop, except it runs the body before checking the conditional.
+```C
+int a = 0;
+int b = 5;
+int c = 4;
+do {
+  c = b;
+}
+while (a);
+// c is still assigned value 5
+```
+
+The `for` loop repeats based on a special syntax `for (<init>; <condition>; <after>)`, where statement `init` is run once (before the `for` loop begins), `condition` is tested each loop before running the body, and `after` is run each loop after successfully running the body.
+```C
+int a = 0;
+for (int i = 0; i < 5; i++) {
+  a += i;
+}
+// a is now 10
+```
+
+There are two other statements specifically relevant for flow control while using loops: `break` and `continue`. The `break` statement prematurely and immediately exits the loop entirely, while the `continue` statement causes the loop to skip the rest of the body to the next evaluation of the conditional statement.
+
+#### Functions
+
+The C language provides a fairly simple syntax for representing subroutines that is more formally constrained than with Assembly. In C, a subroutine is representable as a **Function**. In C, functions are similar to the concept of a mathematical function: a construct that takes input and maps it to some output. The main difference is that C functions have the ability to change state of variables that are neither inputs nor outputs.
+
+Like variables, functions can be _declared_ (describing function name, inputs, and output) and _defined_ (statements min the function body fully described) as separate actions. For functions, this separation is a much more common practice than with variables. Also like variables, functions can be declared more than once, but can only be defined once.
+
+Function _declarations_ generally have syntax
+```
+<return-type> <function-name>(<comma-separated-parameter-list>);
+```
+where the parameters are formatted as either `<type>` or `<type> <parameter-name>`. Within this format, a **Parameter** is a variable that serves as input to the function (as seen within the function), and the **Return** is the (singular!) output value of the function.
+
+The function definition is nearly identical to the function declaration, except instead of terminating the statement with a semicolon, opening and closing brackets are used to define the body of statements that the function represents.
+
+```C
+// Function declaration: the program knows this function exists
+int addIntegers(int a, int b);
+
+// Function definition: the function
+//   - exists
+//   - has program memory assigned to hold it
+//   - has statements described in its body
+int addIntegers(int a, int b) {
+  int c = a + b;
+  // "return" causes the value of c to be provided as an output
+  // the type of the variable or literal returned needs to match the return-type of the declaration
+  return c;
+}
+```
+
+Just like with Assembly, to invoke a function is to _call_ the function. Unlike with Assembly, there is a defined (and very particular) syntax for making function calls in C. An **Argument** is the specific variable or literal given to a function during a call to it.
+
+```C
+// Assume addIntegers has already been fully defined
+// Declared here for ease of discussion
+int addIntegers(int a, int b);
+
+int d = 1;
+int e = 5;
+
+// Function is called by invoking the name, followed by parentheses containing arguments
+// Arguments to the function are given in order (not by name)
+// Return value from the function can be assigned to a variable, used as an argument, or operated on
+int f = addIntegers(d, e);
+f = f + addIntegers(f, f);
+f = addIntegers(addIntegers(d, e), f);
+```
+
+Arguments to a function in C are **Pass-by-Value**, meaning the value of the variable is presented to the function body as a copy. This means that if the function tries to modify one of its parameters, the change will not be visible outside the function.
+
+```C
+int internalCounter(int a) {
+  a += 1;
+  return a;
+}
+
+int b = 1;
+int c = internalCounter(b);
+// state: b == 1, c == 2
+// b did not change since arguments are pass-by-value
+```
+
+Also worth of note is that functions can have optionally no return value, and/or optionally no parameters.
+
+```C
+// Denote lack of return value with "void"
+void noReturn(int a) {
+  // do things
+  return;  // Can still have a return statement, but it can't return a value
+}
+int b = noReturnType(1);  // Invalid: noReturnType doesn't return an int value
+
+// Denote lack of parameters either with "void" or with empty parentheses
+void noParams(void);
+// OR
+void noparams();
+```
+
+Lastly, functions have the ability to nest, just as with Assembly. The C language guarantees that all function calls are placed on a "call stack" regardless of whether or not underlying hardware actually supports a hardware stack. A special case of this nesting is when a function calls itself - a condition known as **Recursion**. Since the call stack does need to be represented somewhere, it is finite, so if functions nest too deeply, then it is possible that the computer runs out of stack space to call additional functions (aka a **Stack Overflow**). Variables can be defined within functions, but functions cannot be defined within other functions. Any variables defined within functions are represented as part of the function's stack frame, and so should not / cannot be referenced after the function returns.
+
+```C
+// Recursion example: fibnoacci sequence
+int fib(int n) {
+  if (n == 0){
+    return 0;
+  }
+  if (n == 1) {
+    return 1;
+  }
+  return fib(n-1) + fib (n-2);
+}
+// for sufficiently high "n", calling fib(n) may result in a stack overflow
+
+```
+
+#### Scope
+
+As a consequence of the syntax provided by C, we can now represent the concept of **Scope** - the idea that variables and may have specific bodies of statements in which they are visible (and that they are invisible outside of those bodies). Scope can only ever be restricted.
+
+Variables defined outside of functions are known as **Global Variables**, and are visible everywhere that contains a copy of their declaration. Global variables are automatically initialized by the system to a bitwise value of all zero, although this can be overridden by explicitly initializing the variable. All functions have global scope.
+
+Variables defined within functions or blocks (any set of brackets) are known as **Local Variables**, and can only be seen within the body they are defined in. This also means that variables of the same name can be defined outside of the body; within the body, the local variable will take precedence when referenced. Generally it is advisable to use unique names for all variables anyways. Local variables are not initialized by default, and so _must_ be explicitly initialized.
+
+A specific case of local variable is the set of **Formal Parameters** passed to a function. The parameters are treated as local variables for the duration of the function.
+
+As a rule of thumb, scope is constrained whenever a bracket encloses a body.
+```C
+int globalExample1;  // zero-initialized
+int globalExample2 = 5;  // explicitly initialized
+
+void func(int param) {
+  // param is considered a local variable, initialized by argument passed at call time
+  int localExample1 = 2;  // local variable, must be explicitly initialized to be used
+  globalExample1 += localExample1;  // globals have visibility here
+  if (1) {
+    int deeperNestingLocal = 1;  // anywhere that defines a body of statements can contain nested locals
+  }
+  // note: deeperNestingLocal not visible here
+}
+// state: globalExample1 == 2
+// note: localExample1, deeperNestingLocal not visible at this scope
+
+// it is also possible to use plain brackets to define a scope manually
+{
+  int localExample2 = 0;
+}
+// note: localExample2 not visible at this scope
+```
+
+#### Addressing, Pointers, Arrays
+
+There are many situations where it is useful to be able to manipulate data by its address in memory, and the C language provides simple but powerful options for doing so. Unlike Assembly, C handles address calculation automatically, and exposes two simple operators to the programmer that handle addressing.
+
+**Addressing and Pointers**
+
+To get the address of a variable in memory, use the `address-of` operator, `&`. To store an address, use a **Pointer**, denoted by symbol `*`. Pointers are special data types that contain addresses to specific kinds of data. Declaring a pointer to memory requires knowing the data type at the address to point to. The syntax of declaring a pointer is `<data-type>* <variable name>`. The symbol `*` also doubles as an operator known as `dereference`. When we _dereference_ an address, we retrieve the value at the address.
+
+```C
+int a = 5;
+int* ptr_a = &a;  // get the address of a and store it in ptr_a, a pointer-to-int
+int b = *ptr_a;   // dereference ptr_a and store in b
+*ptr_a = 10;      // modify value of a via ptr_a
+// state: a == 10, b == 5
+```
+
+Recall that a memory address has a fixed bit width, and is the index of a position in memory. In C, all pointers are the same size, because they all need to be able to hold a memory address, regardless of the data type they point to. It is also possible to cast a pointer to an integer type of the same bit width to get an integer representation of the address held by the pointer (and vice versa: cast an integer to a pointer-to-something).
+
+There is a special value reserved when using pointers called the null pointer. This is a pointer that holds memory address zero, and is used to indicate that the pointer does not hold a valid (accessible) memory address. Attempting to dereference a null pointer produces an error.
+
+It is possible to nest pointers: to have a pointer containing the address of another pointer. Since a pointer is fundamentally a variable that holds a particular kind of data (addresses), this should not be surprising. The syntax is equally simple:
+
+```C
+int a = 5;
+int* ptr_a = &a;
+int** ptr_ptr_a = &ptr_a;  // pointer to pointer to a
+int a_val = **ptr_ptr_a;   // dereference both pointers to get to the value
+// state: a_val = 5
+```
+
+One of the most helpful uses of pointers is passing information in and out of functions. Recall that functions arguments are passed by value (i.e. the function cannot change the variable passed in). However, if the variable we pass to a function is a pointer, then the function's body can simply dereference that pointer or modify the data pointed to. Now we have a mechanism for enabling functions to modify data given as parameters.
+
+``` C
+int a = 10;
+
+void foo(int param) {
+  param++;
+}
+foo(a);
+// state: a == 10
+
+void bar(int* param) {
+  (*param)++;
+}
+bar(&a);
+// state: a == 11
+```
+
+Because pointers hold addresses (simple indices), it is possible to do arithmetic using pointers. Pointer arithmetic supports only increment (`++`), decrement (`--`), addition (`+`), subtraction (`-`), and the assignment and equality operators (`=`, `+=`, `-=`, `==`, `!=`). Pointer arithmetic can be used to easily index into formatted contiguous memory.
+
+Note that most computers have an address represent the index of an 8-bit value in memory as the atomic unit of memory. Variables with sizes greater than 8-bits must therefore span across multiple indices of memory, with the address pointing to the first byte in the variable. When performing pointer arithmetic, C accounts for the data type pointed to. For instance, when incrementing a `char*`, the address will increment by 1 (identifying the next place a `char` could be in memory). When incrementing an `int*` (for 32-bit int), the address will increment by 4 (identifying the next place an `int` could be in memory).
+
+```C
+int a0, a1, a2;  // contiguous segment of memory
+int* p_a = &a0;  // reference first variable in memory segment
+p_a += 2;        // adds 2 * size of int to address held in p_a
+*p_a = 10;       // store a value in the new address
+// state: a2 == 10
+```
+
+**Arrays**
+
+Since it would be cumbersome to need to declare variables for each index of a memory segment, C offers a shorthand in the form of an **Array**. An array represents a contiguous section of memory containing one data type. Declaration syntax for an array follows format: `<data-type> <array-name>[<number-of-elements>]`. It is also possible to initialize an array via assignment:
+
+```C
+int arr0[10] = {4, 3, 2, 1};  // length of the list must be <= size of array
+// state:
+// arr0_0 == 4
+// arr0_1 == 3
+// arr0_2 == 2
+// arr0_3 == 1
+// arr0_4 == UNINITIALIZED
+// arr0_5 == UNINITIALIZED
+// ...
+// arr0_9 == UNINITIALIZED
+```
+
+It is also possible to omit the array size, but only if the array will immediately be initialized. The resulting array length will match the number of elements in the initializer list.
+
+Indexing into an array is also simple:
+```C
+int arr[] = {5, 2, 8, 6};  // note: array length 4, valid indices 0-3 inclusive
+int a = arr[0];   // state: a == 5
+int b = arr[3];   // state: b == 6
+int c = arr[4];   // invalid: array index out-of-bounds of array
+int d = arr[-1];  // invalid: array indices can only be positive
+```
+
+Arrays may also be multi-dimensional, and the syntax is a simple extension of the above examples:
+
+```C
+// Declarations
+int a[3][4] = {
+   {0, 1, 2, 3} ,
+   {4, 5, 6, 7} ,
+   {8, 9, 10, 11}
+};
+// OR
+int a[3][4] = {0,1,2,3,4,5,6,7,8,9,10,11};
+
+int val = a[2][3];
+// state: val == 11
+```
+
+Fundamentally, all interactions with arrays can be (and likely are, in implementation) represented as pointers. The variable name of an array represents a pointer to the first element in the array. All array indexing can then be pointer arithmetic based on that first address.
+
+A **String** is a special case of an array: it is an array of `char` type in which the last element is the null character (which, much like the null pointer, is a zero value).
+
+#### Structs and typedef
+
+**Structs**
+
+The C language also provides programmers the ability to group variables into repeatable user-defined data types known as `structs`.
+
+Structs are ordered collections of variables with the following declaration format:
+```
+struct <optional-struct-tag> {
+  <data-type> <variable-name>;
+  <data-type> <variable-name>;
+  ...
+} <variable-name(s)>;
+```
+The `struct-tag` is an optional name for the _kind_ of structure represented by this declaration. Using the `struct-tag` means we can define instances of this struct elsewhere with another statement of `struct <struct-tag> ...`.
+
+Variables defined within the struct declaration are known as _members_. Accessing members of a struct can be achieved via the member access operator (`.`) if the struct is stored as a plain variable, or the indirect member access operator (`->`) if the struct is stored via a pointer.
+
+```C
+// Declaration of struct Book type
+struct Book {
+  char title[50];
+  char author[50];
+  int isbn;
+};
+
+struct Book a;  // definition of struct Book type variable "a"
+struct Book* p_a = &a;  // forming pointer to "a"
+
+// Member access
+a.isbn = 10;
+// OR
+p_a->isbn = 10;
+```
+
+**typedef**
+
+C also provides a simple faculty for creating aliases to data types. This statement is known as `typedef`, and the format for a typedef statement is: `typedef <data-type-definition> <alias-name>`.
+
+Typedef is frequently used with structs to avoid the `struct <struct-tag>` syntax, for brevity. For instance:
+
+```C
+typedef struct Book {
+  char title[50];
+  char author[50];
+  int isbn;
+} Book_t;
+// Book_t is the alias-name (good practice to use _t suffix for user-defined types)
+// the full structure definition is the data-type-definition
+
+// now we can simply call out
+Book_t a;
+Book_t* p_a = &a;
+```
+
+#### Conventions for Code Organization
+
+Projects written in C are often significantly more complex than projects in Assembly, which necessitates splitting the program into maintainable modules. By convention, C programs are typically written in two different file types: headers (file extension `.h`) and source (file extension `.c`).
+
+Headers typically contain only type definitions, function declarations, and constants. The main purpose of a header file is to communicate the existence of functionality within an associated source file. The header can then be inserted into any other source file to act as a group of declarations. Any source file including a header therefore has the ability to call functions and reference constants defined in another module.
+
+Conversely, source files typically contain module-internal variables and definitions, and function implementations.
+
+It isn't strictly necessary to organize C projects in this manner, but it is immensely helpful, and this convention is industry-standard.
+
+**Storage Classes**
+
+A file containing C code can also be referred to as a **Translation Unit**. A **Storage Class** modifier defines the scope/visibility of a variable within or across translation units.
+
+The `auto` storage class is the default storage class for all local variables (and the `auto` modifier is automatically applied).
+
+The `extern` storage class is the default storage class for global variables (and the `extern` modifier is automatically applied). However, it is also possible to use the `extern` modifier to declare the existence of a global variable in another file.
+
+The `static` storage class has different behavior for local vs global variables. For global variables, applying a `static` modifier restricts the variable's visibility to only within the translation unit (and therefore variables of the same name can exist separately in other translation units). For local variables, the `static` modifier extends the lifetime of the variable such that it is not destroyed when its containing body is exited (in practice, the static local is defined not on the stack, but in some other memory area).
+
+**Preprocessor Directives**
+
+The C Preprocessor is a text substitution utility which operates before valid C code is interpreted. The preprocessor interprets special directives (starting with a `#` prefix) that can be used to statically modify a program.
+
+Common directives include:
+- `#define <LABEL> <SUB>`: creates a LABEL that will be replaced in code by SUB when the preprocessor runs
+- `#undef <LABEL>`: un-defines an existing LABEL
+- `if`/`#else`/`#elif`/`#endif`: conditionally allow following code if defined LABEL(s) evaluate to zero or nonzero
+- `ifdef <LABEL>`/`ifndef <LABEL>`: conditionally allow following code to run if the specified LABEL is/isn't defined
+- `#include <file>`: copies the contents of a file into this translation unit (only do this with headers)
+
+There are many other preprocessor directives (and ways to use them), though in many cases increasing the complexity of preprocessor operations used causes code to become less easily readable.
 
 _Demo: Online compiler via [OnlineGDB](https://www.onlinegdb.com/online_c_compiler)_
 
-### Mechanics of C
+### How C Integrates with the Computer
 
-`@todo data types, variables + literals, operators`
-`@todo storage classes and scope`
-`@todo functions, call stack`
-`@todo pointers and arrays`
-`@todo loops and conditionals`
-`@todo structs, typedef`
+Since an Assembler will only translate Assembly into machine code, we now need a new tool to get us from C code files to machine code.
+
+A **Compiler** is a program that translates a _source_ programming language into a _target_ programming language. Most commonly, compilers are used to generate machine language code based on input high-level languages. For C, compilation can happen in several steps.
+
+Compilers generally run the preprocessor stage first, accommodating any text substitution as demanded by directives in the source code. Then, the compiler parses valid C code and translates it either to Assembly or an Assembly-like language. This intermediate format is then optimized. The intermediate format can then be assembled into machine code. For projects attempting to create singular binary images from many source files, another program known as a **Linker** is used to stich together addresses such that the machine code from multiple files can be contained as a single binary file.
+
+For compiler processes supporting Assembly as an intermediate language, this means that it is possible to inspect the "dissassembly" of C source code both for diagnosing bugs and for performance analysis.
+
+Generally, even though the Assembler and Linker are different utilities than the Compiler, all of the utilities required to "build" a program from source are typically shipped together as a package.
+
+Compilers generally offer many configuration parameters so programmers can best determine conditions for a build (optimization focus, language feature extensions, debugging, analysis, etc).
+
+Likely the most widely used compiler is the [GNU C Compiler package (gcc)](https://gcc.gnu.org/onlinedocs/gcc/).
 
 [Index](#contents)
 
