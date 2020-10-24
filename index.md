@@ -1325,6 +1325,7 @@ Fundamentally, all interactions with arrays can be (and likely are, in implement
 
 A **String** is a special case of an array: it is an array of `char` type in which the last element is the null character (which, much like the null pointer, is a zero value).
 
+
 #### Structs and typedef
 
 **Structs**
