@@ -274,6 +274,8 @@ pre[data-line] .line-highlight[data-end]:after {
 <li><a href="#computer-elements">Computer Elements</a></li>
 <li><a href="#computer-architecture">Computer Architecture</a></li>
 <li><a href="#high-level-language-programming-with-c">High-Level Language Programming (with C)</a></li>
+<li><a href="#microcontroller-hands-on">Microcontroller Hands-On</a></li>
+<li><a href="#application-midi-controller-project">Application: MIDI Controller Project</a></li>
 </ul>
 <h2 class="mume-header" id="introduction">Introduction</h2>
 
@@ -1337,7 +1339,7 @@ LRSHIFT 1001
 uint32_t something0<span class="token punctuation">,</span> something1<span class="token punctuation">;</span>
 <span class="token keyword">float</span> x<span class="token punctuation">,</span> y<span class="token punctuation">,</span> z<span class="token punctuation">;</span>
 <span class="token keyword">unsigned</span> <span class="token keyword">short</span> uNsIgNeDsHoRt<span class="token punctuation">;</span>
-</pre><h4 class="mume-header" id="operators-and-literals">Operators and Literals</h4>
+</pre><h4 class="mume-header" id="operators">Operators</h4>
 
 <p>Now that we have variables in which we can store data with fixed meaning, C exposes operators that we can use to access and modify the data. The operators C exposes are as follows:</p>
 <table>
@@ -1581,7 +1583,7 @@ a <span class="token operator">=</span> b<span class="token punctuation">;</span
 <p>Forms of literals for floating point values include:</p>
 <ul>
 <li>Decimal floating-point literal (radix point, no suffix): assumed to be a <code>double</code> written as a decimal value, i.e. <code>2.1</code> = decimal 2.1</li>
-<li>Exponential floating-point literal (radix point, suffix <code>E</code>): assumed to be a <code>double</code> written as a decimal value in exponential notation, i.e. <code>4.0e-2</code> = decimal 2</li>
+<li>Exponential floating-point literal (radix point, suffix <code>E</code>): assumed to be a <code>double</code> written as a decimal value in exponential notation, i.e. <code>4.0e2</code> = decimal 16</li>
 </ul>
 <p>For floating point literals, it is also possible to specify values intended to be interpreted as <code>float</code> by appending suffix <code>f</code> to either literal form. Likewise, it is possible to specify a <code>long double</code> by appending suffix <code>l</code>.</p>
 <p>Character literals can be provided in single quotations, i.e. <code>&apos;a&apos;</code> = character a. Character literals can also represent special characters via &quot;escape sequences&quot;, i.e. <code>&apos;\t&apos;</code> = horizontal tab character or <code>&apos;\n&apos;</code> = new line / line feed.</p>
@@ -1720,7 +1722,7 @@ f <span class="token operator">=</span> <span class="token function">addIntegers
   <span class="token comment">// do things</span>
   <span class="token keyword">return</span><span class="token punctuation">;</span>  <span class="token comment">// Can still have a return statement, but it can&apos;t return a value</span>
 <span class="token punctuation">}</span>
-<span class="token keyword">int</span> b <span class="token operator">=</span> <span class="token function">noReturnType</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// Invalid: noReturnType doesn&apos;t return an int value</span>
+<span class="token keyword">int</span> b <span class="token operator">=</span> <span class="token function">noReturn</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// Invalid: noReturnType doesn&apos;t return an int value</span>
 
 <span class="token comment">// Denote lack of parameters either with &quot;void&quot; or with empty parentheses</span>
 <span class="token keyword">void</span> <span class="token function">noParams</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span><span class="token punctuation">;</span>

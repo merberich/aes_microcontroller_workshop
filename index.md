@@ -859,7 +859,7 @@ float x, y, z;
 unsigned short uNsIgNeDsHoRt;
 ```
 
-#### Operators and Literals
+#### Operators
 
 Now that we have variables in which we can store data with fixed meaning, C exposes operators that we can use to access and modify the data. The operators C exposes are as follows:
 
@@ -966,7 +966,7 @@ For integer literals, it is also possible to specify values intended to be inter
 
 Forms of literals for floating point values include:
 - Decimal floating-point literal (radix point, no suffix): assumed to be a `double` written as a decimal value, i.e. `2.1` = decimal 2.1
-- Exponential floating-point literal (radix point, suffix `E`): assumed to be a `double` written as a decimal value in exponential notation, i.e. `4.0e-2` = decimal 2
+- Exponential floating-point literal (radix point, suffix `E`): assumed to be a `double` written as a decimal value in exponential notation, i.e. `4.0e2` = decimal 16
 
 For floating point literals, it is also possible to specify values intended to be interpreted as `float` by appending suffix `f` to either literal form. Likewise, it is possible to specify a `long double` by appending suffix `l`.
 
@@ -1158,7 +1158,7 @@ void noReturn(int a) {
   // do things
   return;  // Can still have a return statement, but it can't return a value
 }
-int b = noReturnType(1);  // Invalid: noReturnType doesn't return an int value
+int b = noReturn(1);  // Invalid: noReturnType doesn't return an int value
 
 // Denote lack of parameters either with "void" or with empty parentheses
 void noParams(void);
@@ -1324,7 +1324,6 @@ int val = a[2][3];
 Fundamentally, all interactions with arrays can be (and likely are, in implementation) represented as pointers. The variable name of an array represents a pointer to the first element in the array. All array indexing can then be pointer arithmetic based on that first address.
 
 A **String** is a special case of an array: it is an array of `char` type in which the last element is the null character (which, much like the null pointer, is a zero value).
-
 
 #### Structs and typedef
 
