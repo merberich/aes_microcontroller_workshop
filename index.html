@@ -261,7 +261,7 @@ pre[data-line] .line-highlight[data-end]:after {
     </head>
     <body for="html-export">
       <div class="mume markdown-preview  ">
-      <h1 class="mume-header" id="cal-poly-audio-engineering-society-workshop-microcontroller-theory-and-application">Cal Poly Audio Engineering Society Workshop: Microcontroller Theory and Application</h1>
+      <div><h1 class="mume-header" id="cal-poly-audio-engineering-society-workshop-microcontroller-theory-and-application">Cal Poly Audio Engineering Society Workshop: Microcontroller Theory and Application</h1>
 
 <h2 class="mume-header" id="contents">Contents</h2>
 
@@ -274,8 +274,7 @@ pre[data-line] .line-highlight[data-end]:after {
 <li><a href="#computer-elements">Computer Elements</a></li>
 <li><a href="#computer-architecture">Computer Architecture</a></li>
 <li><a href="#high-level-language-programming-with-c">High-Level Language Programming (with C)</a></li>
-<li><a href="#microcontroller-hands-on">Microcontroller Hands-On</a></li>
-<li><a href="#application-midi-controller-project">Application: MIDI Controller Project</a></li>
+<li><a href="#microcontroller-theory">Microcontroller Theory</a></li>
 </ul>
 <h2 class="mume-header" id="introduction">Introduction</h2>
 
@@ -1840,8 +1839,179 @@ p_a <span class="token operator">+=</span> <span class="token number">2</span><s
 <span class="token comment">// state: val == 11</span>
 </pre><p>Fundamentally, all interactions with arrays can be (and likely are, in implementation) represented as pointers. The variable name of an array represents a pointer to the first element in the array. All array indexing can then be pointer arithmetic based on that first address.</p>
 <p>A <strong>String</strong> is a special case of an array: it is an array of <code>char</code> type in which the last element is the null character (which, much like the null pointer, is a zero value).</p>
-<p><a href="#contents">Index</a></p>
+<h4 class="mume-header" id="structs-and-typedef">Structs and typedef</h4>
 
+<p><strong>Structs</strong></p>
+<p>The C language also provides programmers the ability to group variables into repeatable user-defined data types known as <code>structs</code>.</p>
+<p>Structs are ordered collections of variables with the following declaration format:</p>
+<pre data-role="codeBlock" data-info class="language-"><code>struct &lt;optional-struct-tag&gt; {
+  &lt;data-type&gt; &lt;variable-name&gt;;
+  &lt;data-type&gt; &lt;variable-name&gt;;
+  ...
+} &lt;variable-name(s)&gt;;
+</code></pre><p>The <code>struct-tag</code> is an optional name for the <em>kind</em> of structure represented by this declaration. Using the <code>struct-tag</code> means we can define instances of this struct elsewhere with another statement of <code>struct &lt;struct-tag&gt; ...</code>.</p>
+<p>Variables defined within the struct declaration are known as <em>members</em>. Accessing members of a struct can be achieved via the member access operator (<code>.</code>) if the struct is stored as a plain variable, or the indirect member access operator (<code>-&gt;</code>) if the struct is stored via a pointer.</p>
+<pre data-role="codeBlock" data-info="C" class="language-c"><span class="token comment">// Declaration of struct Book type</span>
+<span class="token keyword">struct</span> Book <span class="token punctuation">{</span>
+  <span class="token keyword">char</span> title<span class="token punctuation">[</span><span class="token number">50</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">char</span> author<span class="token punctuation">[</span><span class="token number">50</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">int</span> isbn<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+<span class="token keyword">struct</span> Book a<span class="token punctuation">;</span>  <span class="token comment">// definition of struct Book type variable &quot;a&quot;</span>
+<span class="token keyword">struct</span> Book<span class="token operator">*</span> p_a <span class="token operator">=</span> <span class="token operator">&amp;</span>a<span class="token punctuation">;</span>  <span class="token comment">// forming pointer to &quot;a&quot;</span>
+
+<span class="token comment">// Member access</span>
+a<span class="token punctuation">.</span>isbn <span class="token operator">=</span> <span class="token number">10</span><span class="token punctuation">;</span>
+<span class="token comment">// OR</span>
+p_a<span class="token operator">-&gt;</span>isbn <span class="token operator">=</span> <span class="token number">10</span><span class="token punctuation">;</span>
+</pre><p><strong>typedef</strong></p>
+<p>C also provides a simple faculty for creating aliases to data types. This statement is known as <code>typedef</code>, and the format for a typedef statement is: <code>typedef &lt;data-type-definition&gt; &lt;alias-name&gt;</code>.</p>
+<p>Typedef is frequently used with structs to avoid the <code>struct &lt;struct-tag&gt;</code> syntax, for brevity. For instance:</p>
+<pre data-role="codeBlock" data-info="C" class="language-c"><span class="token keyword">typedef</span> <span class="token keyword">struct</span> Book <span class="token punctuation">{</span>
+  <span class="token keyword">char</span> title<span class="token punctuation">[</span><span class="token number">50</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">char</span> author<span class="token punctuation">[</span><span class="token number">50</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">int</span> isbn<span class="token punctuation">;</span>
+<span class="token punctuation">}</span> Book_t<span class="token punctuation">;</span>
+<span class="token comment">// Book_t is the alias-name (good practice to use _t suffix for user-defined types)</span>
+<span class="token comment">// the full structure definition is the data-type-definition</span>
+
+<span class="token comment">// now we can simply call out</span>
+Book_t a<span class="token punctuation">;</span>
+Book_t<span class="token operator">*</span> p_a <span class="token operator">=</span> <span class="token operator">&amp;</span>a<span class="token punctuation">;</span>
+</pre><h4 class="mume-header" id="conventions-for-code-organization">Conventions for Code Organization</h4>
+
+<p>Projects written in C are often significantly more complex than projects in Assembly, which necessitates splitting the program into maintainable modules. By convention, C programs are typically written in two different file types: headers (file extension <code>.h</code>) and source (file extension <code>.c</code>).</p>
+<p>Headers typically contain only type definitions, function declarations, and constants. The main purpose of a header file is to communicate the existence of functionality within an associated source file. The header can then be inserted into any other source file to act as a group of declarations. Any source file including a header therefore has the ability to call functions and reference constants defined in another module.</p>
+<p>Conversely, source files typically contain module-internal variables and definitions, and function implementations.</p>
+<p>It isn&apos;t strictly necessary to organize C projects in this manner, but it is immensely helpful, and this convention is industry-standard.</p>
+<p><strong>Storage Classes</strong></p>
+<p>A file containing C code can also be referred to as a <strong>Translation Unit</strong>. A <strong>Storage Class</strong> modifier defines the scope/visibility of a variable within or across translation units.</p>
+<p>The <code>auto</code> storage class is the default storage class for all local variables (and the <code>auto</code> modifier is automatically applied).</p>
+<p>The <code>extern</code> storage class is the default storage class for global variables (and the <code>extern</code> modifier is automatically applied). However, it is also possible to use the <code>extern</code> modifier to declare the existence of a global variable in another file.</p>
+<p>The <code>static</code> storage class has different behavior for local vs global variables. For global variables, applying a <code>static</code> modifier restricts the variable&apos;s visibility to only within the translation unit (and therefore variables of the same name can exist separately in other translation units). For local variables, the <code>static</code> modifier extends the lifetime of the variable such that it is not destroyed when its containing body is exited (in practice, the static local is defined not on the stack, but in some other memory area).</p>
+<p><strong>Volatile</strong></p>
+<p>One C feature that is particularly relevant to development on microprocessors is the <code>volatile</code> keyword. Volatility is the concept that a declared variable (has some position in memory) can have its value changed without the programmer&apos;s code assigning a new value to the variable. There are a number of ways this can happen.</p>
+<p>For one, on computers with multiple CPUs (for running operations concurrently), each concurrent process may have access to the same memory space. In cases where both cores try to access the same address, the value held at the address can be modified by one core without the other&apos;s awareness.</p>
+<p>Another case is when a hardware device (likely sitting on the I/O bus) effectively does the same thing. If hardware modifies a memory address without the CPU directly accessing that same address, the CPU has no way of knowing when or if the address has been modified.</p>
+<p>In the worst case, when a memory address is used (in either of these scenarios) as a means of communication between program and external system (another CPU core, hardware, etc) and the CPU doesn&apos;t identify that the memory value has changed, then it could miss an important cue to take some action. It is even possible that, if no other code assigns a value to this kind of variable - in any branch of code execution - that the variable could be optimized away by treating it as a constant value. In this case, the variable&apos;s value would <em>never</em> change, which means there is no possibility of communication occurring.</p>
+<p>The <code>volatile</code> keyword exists to deal with this specific scenario. <code>volatile</code> informs the program that a memory address must never be cached or treated as a constant. So, every time the CPU wants to read the value of a memory address, it is forced to fetch the actual value, rather than the &quot;shortcut&quot; of a temporary cached value.</p>
+<p>We&apos;ll return to this more in microcontroller theory.</p>
+<p><strong>Preprocessor Directives</strong></p>
+<p>The C Preprocessor is a text substitution utility which operates before valid C code is interpreted. The preprocessor interprets special directives (starting with a <code>#</code> prefix) that can be used to statically modify a program.</p>
+<p>Common directives include:</p>
+<ul>
+<li><code>#define &lt;LABEL&gt; &lt;SUB&gt;</code>: creates a LABEL that will be replaced in code by SUB when the preprocessor runs</li>
+<li><code>#undef &lt;LABEL&gt;</code>: un-defines an existing LABEL</li>
+<li><code>if</code>/<code>#else</code>/<code>#elif</code>/<code>#endif</code>: conditionally allow following code if defined LABEL(s) evaluate to zero or nonzero</li>
+<li><code>ifdef &lt;LABEL&gt;</code>/<code>ifndef &lt;LABEL&gt;</code>: conditionally allow following code to run if the specified LABEL is/isn&apos;t defined</li>
+<li><code>#include &lt;file&gt;</code>: copies the contents of a file into this translation unit (only do this with headers)</li>
+</ul>
+<p>There are many other preprocessor directives (and ways to use them), though in many cases increasing the complexity of preprocessor operations used causes code to become less easily readable.</p>
+<p><em>Demo: Online compiler via <a href="https://www.onlinegdb.com/online_c_compiler">OnlineGDB</a></em></p>
+<h3 class="mume-header" id="how-c-integrates-with-the-computer">How C Integrates with the Computer</h3>
+
+<p>Since an Assembler will only translate Assembly into machine code, we now need a new tool to get us from C code files to machine code.</p>
+<p>A <strong>Compiler</strong> is a program that translates a <em>source</em> programming language into a <em>target</em> programming language. Most commonly, compilers are used to generate machine language code based on input high-level languages.</p>
+<p>According to the C standard, all compilers expect the presence of a file called <code>main.c</code>, which has the following function definition:</p>
+<pre data-role="codeBlock" data-info="C" class="language-c"><span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment">// code goes here</span>
+  <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</pre><p>The <code>main</code> function is the entrypoint into program code. The commands within <code>main</code> are translated into the first instructions in program memory. <code>main</code> can have optional parameters, but for microcontroller development purposes, they will not be useful.</p>
+<p>For C, compilation can happen in several steps.</p>
+<p>Compilers run the preprocessor stage first, accommodating any text substitution as demanded by directives in the source code. Then, the compiler parses valid C code and translates it either to an intermediate format, which is typically Assembly or an Assembly-like language. For compiler processes supporting Assembly as an intermediate language, this means that it is possible to inspect the &quot;disassembly&quot; of C source code both for diagnosing bugs and for performance analysis.</p>
+<p>After initial translation to the intermediate format, the code can then be optimized. With high level languages, there are often thousands of ways to express high level language syntax via machine instructions. Optimization allows the compiler to prune the expressions of machine code that are least likely to complete quickly (given code with branching paths of execution). The easiest way of doing so is recognizing when variables are unneeded, or can be cached to avoid unnecessary memory access, but there are many more advanced methods.</p>
+<p>After one or more passes of optimization, the code in intermediate format can then be assembled into machine code. For projects attempting to create singular binary images from many source files, this intermediate format is assembled into <strong>Object Code</strong>, which contains both valid machine code and placeholder values and intermediate addresses. Using these placeholders, another program known as a <strong>Linker</strong> can then be used to stich together addresses. In this way, the machine code from multiple files can be contained as a single binary file that is <em>position independent</em> (its start address in memory can be changed without needing to rebuild the program).</p>
+<img src="res/diagram-compilation-stages.png" title="Source: https://developer.gnome.org/anjuta-build-tutorial/stable/figures/compilation-stages.png.en" style="display: block; margin-left: auto; margin-right: auto">
+<p><em>Compilation stages example for inputs <code>main.c</code> and <code>aux.c</code>.</em></p>
+<p>Generally, even though the Assembler and Linker are different utilities than the Compiler, all of the utilities required to &quot;build&quot; a program from source are typically shipped together as a package and collectively called a &quot;compiler&quot;.</p>
+<p>Compilers generally offer many configuration parameters so programmers can best determine conditions for a build (optimization focus, language feature extensions, debugging, analysis, etc).</p>
+<p>Likely the most widely used compiler is the <a href="https://gcc.gnu.org/onlinedocs/gcc/">GNU C Compiler package (gcc)</a>.</p>
+<p><a href="#contents">Index</a></p>
+<h2 class="mume-header" id="microcontroller-theory">Microcontroller Theory</h2>
+
+<p>Now that we have an understanding of the underlying concepts that go into designing a computer, we can finally revisit our first question: &quot;What is a microcontroller?&quot;</p>
+<p>A <strong>Microcontroller</strong> (abbreviated MCU) is a small, relatively low-power computer that has dedicated I/O hardware fit for specific purposes, which is implemented all on a single integrated circuit. Microcontrollers are generally intended to function in specific applications, and the I/O hardware for a given MCU will be a set selected for its field of use. Microcontrollers may expose I/O interfaces externally via pins on the IC to expand and connect to other kinds of systems as well (including breaking out features like memory, power supply, and generic communication).</p>
+<p>Unfortunately, each MCU design is different enough that they are difficult to talk about generally. From this point on, examples will refer to the <a href="https://www.microchip.com/wwwproducts/en/ATMEGA328P">Atmel/Microchip ATMega328p</a>, which is the microcontroller that drives the Arduino Uno, the single-board computer we will be using for the hands-on project.</p>
+<p><em>Demo: Trace through <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATMega328p datasheet</a> while discussing this section.</em></p>
+<h3 class="mume-header" id="clocking-and-time-measurement">Clocking and Time Measurement</h3>
+
+<p>Previously we had mentioned the fact that all parts of the instruction cycle occur at a rate directed by the computer&apos;s CPU clock. As previously discussed, a computer&apos;s clock source can be generated either by internal or external physical elements (like piezoelectric crystal oscillators). Most microcontrollers provide a default (inaccurate) RC oscillator-based clock, but the optional ability to use an external crystal oscillator (within specific frequency ranges).</p>
+<p>In a microcontroller, the CPU clock is not the only clock to consider. The CPU may choose to divide the clock rate to send lower frequency (but still synchronized) clock signals to other devices on the MCU. Additionally, for most microcontrollers, both the CPU clock and all other clocks are configurable via <em>prescaler</em> registers. A prescaler is a digital logic block that divides a clock signal&apos;s frequency by a factor of 2, depending on the prescaler value.</p>
+<p><em>See <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATMega328p datasheet</a> page 36 - System Clock and Clock Options.</em></p>
+<p>For many applications, it is necessary for the microcontroller to be able to measure relative passage of time. If the microcontroller&apos;s clock source is stable and accurate enough, the CPU clock can be used to gauge passage of time.</p>
+<p>The first method of time tracking is by using a <em>delay</em>, which causes the CPU to pause and take no action for a specified amount of CPU clock cycles.</p>
+<pre data-role="codeBlock" data-info="C" class="language-c"><span class="token keyword">void</span> <span class="token function">delayMs</span><span class="token punctuation">(</span>uint64_t time_ms<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span>uint64_t i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> time_ms <span class="token operator">*</span> TICKS_PER_MS<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">__NOP</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// equates to an assembly &quot;no operation&quot; instruction, which lasts exactly one clock cycle</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><p>The second (and much more practical) method is to measure and compare time by checking the CPU clock counter register.</p>
+<pre data-role="codeBlock" data-info="C" class="language-c">uint64_t <span class="token function">getCpuClockTicks</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// assume this exists</span>
+
+uint64_t <span class="token function">getCpuTimeMs</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token function">getCpuClockTicks</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">/</span> TICKS_PER_MS<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">func</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  uint64_t start <span class="token operator">=</span> <span class="token function">getCpuTimeMs</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">do</span> <span class="token punctuation">{</span>
+    <span class="token comment">// stuff while waiting for a specific time</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token function">getCpuTimeMs</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> start <span class="token operator">&lt;</span> WAIT_TIME<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token comment">// time has elapsed, do other things now</span>
+<span class="token punctuation">}</span>
+</pre><h3 class="mume-header" id="power">Power</h3>
+
+<p>Microcontrollers, like any other computer, require a power source. Microcontrollers are generally rated for some nominal &quot;operating voltage&quot; range, which should match or slightly exceed the logic level range on its external I/O pins. Generally, the highest CPU clock rates supported by the circuit implementation are only achievable at the higher end of the operating voltage range.</p>
+<p>For the ATMega328p, this operating voltage range is 1.8-5.5V, which is commonly considered the &quot;5V logic level&quot;.</p>
+<p>Microcontrollers also typically require very steady current and voltage level provided to them to ensure smooth operation. This often requires an external power supply (a discrete electrical element or combination of elements). The Arduino Uno, for instance, provides a voltage regulator that can accept a 7-12V range as input, and provides a steady 5V to the ATMega328p.</p>
+<p><em>See the <a href="docs/Schematic__Arduino_Uno_Rev_3.pdf">Arduino schematic</a>.</em></p>
+<p>Apart from consuming power, microcontrollers may occasionally be required to supply power for some applications. Unlike general electrical circuits, microcontrollers are not designed to source high amounts of current. The ATMega328p in particular can only source up to 40mA DC on each of the I/O pins.</p>
+<p><em>See the <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATMega328p datasheet</a> page 308 - Electrical Characteristics.</em></p>
+<p>For applications that need to drive high-power external electrical elements, it is therefore necessary to use the I/O pins on a microcontroller only as control signals. Recall that transistors in their most generic use act as switches. There are specific transistors known as <em>power transistors</em> that are capable of passing high current. For high-power applications, it is common to use microcontrollers to provide the switching current that allows a power transistor to open or close. In this case, the power transistor drives the high-power electronics directly, so the digital electronics no longer need to source high current.</p>
+<img src="res/example-solenoid-driver.png" title="Source: https://charleswilkinson.files.wordpress.com/2016/04/solenoid-driver.png" style="display: block; margin-left: auto; margin-right: auto">
+<p>Some microcontrollers also offer the ability to enter a mode that consumes little to no power, for periods where the application program is waiting for some external signal to take action, though this feature is beyond the scope of this workshop.</p>
+<h3 class="mume-header" id="interrupts">Interrupts</h3>
+
+<p>A feature common to most computers that is particularly relevant to microcontroller development is the notion of <em>interrupts</em>. An <strong>Interrupt</strong> is a configurable electrical signal that connects to the CPU. When configured, and the interrupt signal transitions from logic low to high, the CPU pauses and saves its current state, then immediately jumps to an <strong>Interrupt Service Routine (ISR)</strong>, a subroutine that runs only when interrupts are thrown. In this way, the normal operation of a program&apos;s flow of execution can be temporarily &quot;interrupted&quot; for some other (high priority) code to run, after which the regular program resumes.</p>
+<p>Interrupts are frequently used in microcontroller development to handle events that cannot be predicted by the regular execution of the program. Often times, interrupts are triggered for events that are time-sensitive and need to be handled very soon after the trigger is seen. At the same time, for systems relying on many interrupts, if one ISR takes too long to complete, another interrupt (of higher priority) may take control and prevent the initial ISR from completing on time. For these reasons, it is good practice to make ISRs take as short of time to execute as possible.</p>
+<p>Configuration (enabling) of interrupts often happens through a register containing <strong>Interrupt Masks</strong>. When the mask bit for a specific interrupt is set, that interrupt is enabled, and the trigger will fire on appropriate conditions. Some interrupts may be <em>non-maskable</em>.</p>
+<p>Since interrupts can alter the flow of execution of a program, and can access the same memory areas as the program, it is common to see use of the C <code>volatile</code> keyword when attempting to communicate between an ISR and non-interrupt-context code.</p>
+<p><em>See the <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATMega328p datasheet</a> page 23 - Reset and Interrupt Handling, and page 66 - Interrupts.</em></p>
+<h3 class="mume-header" id="watchdog">Watchdog</h3>
+
+<p>For safety-critical applications, many microcontrollers offer a watchdog feature. A <strong>Watchdog Timer</strong> is a type of dead-man&apos;s switch that, when configured, must be serviced by writing to a register periodically. If enough time elapses between watchdog register accesses, a <strong>Watchdog Timeout</strong> occurs, and the watchdog resets the CPU, causing the application code to be completely restarted.</p>
+<p>Watchdog timers are excellent precautionary features: if the application program contains an error that would cause it to &quot;lock up&quot; into an infinite or arbitrarily long loop, the watchdog can reset the system quickly and resume regular operation. In essence, a watchdog timer is a means of recovering from critical failures.</p>
+<p>In silicon, watchdog timers can be implemented as simple counter registers that compare their values to a timeout value.</p>
+<p><em>See the <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATMega328p datasheet</a> page 60 - Watchdog Timer.</em></p>
+<h3 class="mume-header" id="programming">Programming</h3>
+
+<p>More often than not, developing code for a microcontroller application will occur on a personal computer. This means the compiler toolchain is no longer on the same machine that it will be targeting. For PC application development, the compiler toolchain just writes the output position-independent binary to memory directly, but for MCU development, the toolchain no longer has access to the target&apos;s memory.</p>
+<p>To be able to load the compiled binary artifact onto the microcontroller, developers can use a <strong>Programmer/Debugger</strong>, a dedicated electronic device that connects to the MCU to access memory. In this case, the MCU offers a standard interface over which external devices can send commands that cause the MCU to modify its own program memory. The logic/behavior of this interface is baked into the hardware itself.</p>
+<p>The ATMega328p offers several interfaces capable of hosting Programmers. The first is the serial programming interface compatible with AVRISP (page 303) and the second is the debugWIRE interface (page 262). Some programming interfaces (like debugWIRE) have an additional set of commands that support live debugging (stepping through code execution manually, inspecting variables and arbitrary memory, etc).</p>
+<p>The other method of programming a microcontroller is possible only if the device already has a special kind of application already loaded - a <em>bootloader</em>. A <strong>Bootloader</strong> is an application that starts up immediately after a computer first receives power (boots), and has the special function of deciding the next program that will be loaded. Bootloaders typically allow the system to be programmed over non-standard interfaces (i.e. interfaces that hardware doesn&apos;t natively support).</p>
+<p>The Arduino Uno supports a unique kind of bootloader: instead of a program running directly on our target (the ATMega328p), a secondary MCU is exposed to the ATMega&apos;s programming interfaces, and acts as a bridge over a different communications interface (USB). So, the secondary MCU boots first, and then releases the ATMega from reset. If the secondary MCU receives a signal over USB to begin programming, it programs the ATMega instead, and then allows it to load. Unfortunately, this means it is not possible to do direct debugging on the Arduino Uno while using the bootloader interface without additional hardware.</p>
+<p><em>See the <a href="docs/Schematic__Arduino_Uno_Rev_3.pdf">Arduino schematic</a>.</em></p>
+<hr>
+<p>For next time:</p>
+<ul>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> <strong>Download and install</strong> (all to the same directory):
+<ul>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> <a href="https://www.ladyada.net/learn/avr/index.html">AVRDude (programmer)</a> (see the &lt;platform&gt; &quot;Setup&quot; sections)</li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> <a href="https://raw.githubusercontent.com/arduino/arduino-flash-tools/master/tools_linux_64/avrdude/etc/avrdude.conf">Arduino bootloader AVRDude config file</a> - copy the raw text and save this locally as <code>avrdude.conf</code></li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> <a href="https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers">AVR 8-bit toolchain</a></li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> <a href="http://www.sax.de/~joerg/mfile/">MFile makefile generator</a></li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> <a href="https://projectgus.github.io/hairless-midiserial/">Hairless MIDI-Serial Bridge</a></li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> (Windows users only) <a href="https://www.tobias-erichsen.de/software/loopmidi.html">loopMIDI</a></li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> Google Chrome browser</li>
+</ul>
+</li>
+<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> <strong>Create account</strong> on <a href="https://www.audiotool.com/">audiotool</a> and log in via Chrome only</li>
+</ul>
+<p><a href="#contents">Index</a></p>
+</div>
       </div>
       
       

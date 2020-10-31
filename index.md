@@ -13,8 +13,9 @@
 - [Computer Elements](#computer-elements)
 - [Computer Architecture](#computer-architecture)
 - [High-Level Language Programming (with C)](#high-level-language-programming-with-c)
-- [Microcontroller Hands-On](#microcontroller-hands-on)
-- [Application: MIDI Controller Project](#application-midi-controller-project)
+- [Microcontroller Theory](#microcontroller-theory)
+- [Microcontroller Hands-On Application: MIDI Controller Project](#microcontroller-hands-on-application-midi-controller-project)
+- [Parting Words and Resources](#parting-words-and-resources)
 
 <!-- /TOC -->
 
@@ -1400,6 +1401,20 @@ The `extern` storage class is the default storage class for global variables (an
 
 The `static` storage class has different behavior for local vs global variables. For global variables, applying a `static` modifier restricts the variable's visibility to only within the translation unit (and therefore variables of the same name can exist separately in other translation units). For local variables, the `static` modifier extends the lifetime of the variable such that it is not destroyed when its containing body is exited (in practice, the static local is defined not on the stack, but in some other memory area).
 
+**Volatile**
+
+One C feature that is particularly relevant to development on microprocessors is the `volatile` keyword. Volatility is the concept that a declared variable (has some position in memory) can have its value changed without the programmer's code assigning a new value to the variable. There are a number of ways this can happen.
+
+For one, on computers with multiple CPUs (for running operations concurrently), each concurrent process may have access to the same memory space. In cases where both cores try to access the same address, the value held at the address can be modified by one core without the other's awareness.
+
+Another case is when a hardware device (likely sitting on the I/O bus) effectively does the same thing. If hardware modifies a memory address without the CPU directly accessing that same address, the CPU has no way of knowing when or if the address has been modified.
+
+In the worst case, when a memory address is used (in either of these scenarios) as a means of communication between program and external system (another CPU core, hardware, etc) and the CPU doesn't identify that the memory value has changed, then it could miss an important cue to take some action. It is even possible that, if no other code assigns a value to this kind of variable - in any branch of code execution - that the variable could be optimized away by treating it as a constant value. In this case, the variable's value would _never_ change, which means there is no possibility of communication occurring.
+
+The `volatile` keyword exists to deal with this specific scenario. `volatile` informs the program that a memory address must never be cached or treated as a constant. So, every time the CPU wants to read the value of a memory address, it is forced to fetch the actual value, rather than the "shortcut" of a temporary cached value.
+
+We'll return to this more in microcontroller theory.
+
 **Preprocessor Directives**
 
 The C Preprocessor is a text substitution utility which operates before valid C code is interpreted. The preprocessor interprets special directives (starting with a `#` prefix) that can be used to statically modify a program.
@@ -1419,13 +1434,30 @@ _Demo: Online compiler via [OnlineGDB](https://www.onlinegdb.com/online_c_compil
 
 Since an Assembler will only translate Assembly into machine code, we now need a new tool to get us from C code files to machine code.
 
-A **Compiler** is a program that translates a _source_ programming language into a _target_ programming language. Most commonly, compilers are used to generate machine language code based on input high-level languages. For C, compilation can happen in several steps.
+A **Compiler** is a program that translates a _source_ programming language into a _target_ programming language. Most commonly, compilers are used to generate machine language code based on input high-level languages.
 
-Compilers generally run the preprocessor stage first, accommodating any text substitution as demanded by directives in the source code. Then, the compiler parses valid C code and translates it either to Assembly or an Assembly-like language. This intermediate format is then optimized. The intermediate format can then be assembled into machine code. For projects attempting to create singular binary images from many source files, another program known as a **Linker** is used to stich together addresses such that the machine code from multiple files can be contained as a single binary file.
+According to the C standard, all compilers expect the presence of a file called `main.c`, which has the following function definition:
+```C
+int main() {
+  // code goes here
+  return 0;
+}
+```
+The `main` function is the entrypoint into program code. The commands within `main` are translated into the first instructions in program memory. `main` can have optional parameters, but for microcontroller development purposes, they will not be useful.
 
-For compiler processes supporting Assembly as an intermediate language, this means that it is possible to inspect the "dissassembly" of C source code both for diagnosing bugs and for performance analysis.
+For C, compilation can happen in several steps.
 
-Generally, even though the Assembler and Linker are different utilities than the Compiler, all of the utilities required to "build" a program from source are typically shipped together as a package.
+Compilers run the preprocessor stage first, accommodating any text substitution as demanded by directives in the source code. Then, the compiler parses valid C code and translates it either to an intermediate format, which is typically Assembly or an Assembly-like language. For compiler processes supporting Assembly as an intermediate language, this means that it is possible to inspect the "disassembly" of C source code both for diagnosing bugs and for performance analysis.
+
+After initial translation to the intermediate format, the code can then be optimized. With high level languages, there are often thousands of ways to express high level language syntax via machine instructions. Optimization allows the compiler to prune the expressions of machine code that are least likely to complete quickly (given code with branching paths of execution). The easiest way of doing so is recognizing when variables are unneeded, or can be cached to avoid unnecessary memory access, but there are many more advanced methods.
+
+After one or more passes of optimization, the code in intermediate format can then be assembled into machine code. For projects attempting to create singular binary images from many source files, this intermediate format is assembled into **Object Code**, which contains both valid machine code and placeholder values and intermediate addresses. Using these placeholders, another program known as a **Linker** can then be used to stich together addresses. In this way, the machine code from multiple files can be contained as a single binary file that is _position independent_ (its start address in memory can be changed without needing to rebuild the program).
+
+<img src="res/diagram-compilation-stages.png" title="Source: https://developer.gnome.org/anjuta-build-tutorial/stable/figures/compilation-stages.png.en" style="display: block; margin-left: auto; margin-right: auto">
+
+_Compilation stages example for inputs `main.c` and `aux.c`._
+
+Generally, even though the Assembler and Linker are different utilities than the Compiler, all of the utilities required to "build" a program from source are typically shipped together as a package and collectively called a "compiler".
 
 Compilers generally offer many configuration parameters so programmers can best determine conditions for a build (optimization focus, language feature extensions, debugging, analysis, etc).
 
@@ -1434,20 +1466,145 @@ Likely the most widely used compiler is the [GNU C Compiler package (gcc)](https
 [Index](#contents)
 
 
-## Microcontroller Hands-On
+## Microcontroller Theory
 
-`@todo organize the below into sections`
+Now that we have an understanding of the underlying concepts that go into designing a computer, we can finally revisit our first question: "What is a microcontroller?"
 
-`@todo definition of a microcontroller`
-`@todo reading datasheets`
-`@todo additions to architecture: clocking, power, interrupts, watchdog, peripherals`
-`@todo software development tools: ICSP, debugger, bootloaders`
+A **Microcontroller** (abbreviated MCU) is a small, relatively low-power computer that has dedicated I/O hardware fit for specific purposes, which is implemented all on a single integrated circuit. Microcontrollers are generally intended to function in specific applications, and the I/O hardware for a given MCU will be a set selected for its field of use. Microcontrollers may expose I/O interfaces externally via pins on the IC to expand and connect to other kinds of systems as well (including breaking out features like memory, power supply, and generic communication).
+
+Unfortunately, each MCU design is different enough that they are difficult to talk about generally. From this point on, examples will refer to the [Atmel/Microchip ATMega328p](https://www.microchip.com/wwwproducts/en/ATMEGA328P), which is the microcontroller that drives the Arduino Uno, the single-board computer we will be using for the hands-on project.
+
+_Demo: Trace through [ATMega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) while discussing this section._
+
+### Clocking and Time Measurement
+
+Previously we had mentioned the fact that all parts of the instruction cycle occur at a rate directed by the computer's CPU clock. As previously discussed, a computer's clock source can be generated either by internal or external physical elements (like piezoelectric crystal oscillators). Most microcontrollers provide a default (inaccurate) RC oscillator-based clock, but the optional ability to use an external crystal oscillator (within specific frequency ranges).
+
+In a microcontroller, the CPU clock is not the only clock to consider. The CPU may choose to divide the clock rate to send lower frequency (but still synchronized) clock signals to other devices on the MCU. Additionally, for most microcontrollers, both the CPU clock and all other clocks are configurable via _prescaler_ registers. A prescaler is a digital logic block that divides a clock signal's frequency by a factor of 2, depending on the prescaler value.
+
+_See [ATMega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 36 - System Clock and Clock Options._
+
+For many applications, it is necessary for the microcontroller to be able to measure relative passage of time. If the microcontroller's clock source is stable and accurate enough, the CPU clock can be used to gauge passage of time.
+
+The first method of time tracking is by using a _delay_, which causes the CPU to pause and take no action for a specified amount of CPU clock cycles.
+```C
+void delayMs(uint64_t time_ms) {
+  for (uint64_t i = 0; i < time_ms * TICKS_PER_MS; i++) {
+    __NOP();  // equates to an assembly "no operation" instruction, which lasts exactly one clock cycle
+  }
+}
+```
+
+The second (and much more practical) method is to measure and compare time by checking the CPU clock counter register.
+```C
+uint64_t getCpuClockTicks();  // assume this exists
+
+uint64_t getCpuTimeMs() {
+  return getCpuClockTicks() / TICKS_PER_MS;
+}
+
+void func() {
+  uint64_t start = getCpuTimeMs();
+  do {
+    // stuff while waiting for a specific time
+  }
+  while (getCpuTimeMs() - start < WAIT_TIME);
+  // time has elapsed, do other things now
+}
+```
+
+### Power
+
+Microcontrollers, like any other computer, require a power source. Microcontrollers are generally rated for some nominal "operating voltage" range, which should match or slightly exceed the logic level range on its external I/O pins. Generally, the highest CPU clock rates supported by the circuit implementation are only achievable at the higher end of the operating voltage range.
+
+For the ATMega328p, this operating voltage range is 1.8-5.5V, which is commonly considered the "5V logic level".
+
+Microcontrollers also typically require very steady current and voltage level provided to them to ensure smooth operation. This often requires an external power supply (a discrete electrical element or combination of elements). The Arduino Uno, for instance, provides a voltage regulator that can accept a 7-12V range as input, and provides a steady 5V to the ATMega328p.
+
+_See the [Arduino schematic](docs/Schematic__Arduino_Uno_Rev_3.pdf)._
+
+Apart from consuming power, microcontrollers may occasionally be required to supply power for some applications. Unlike general electrical circuits, microcontrollers are not designed to source high amounts of current. The ATMega328p in particular can only source up to 40mA DC on each of the I/O pins.
+
+_See the [ATMega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 308 - Electrical Characteristics._
+
+For applications that need to drive high-power external electrical elements, it is therefore necessary to use the I/O pins on a microcontroller only as control signals. Recall that transistors in their most generic use act as switches. There are specific transistors known as _power transistors_ that are capable of passing high current. For high-power applications, it is common to use microcontrollers to provide the switching current that allows a power transistor to open or close. In this case, the power transistor drives the high-power electronics directly, so the digital electronics no longer need to source high current.
+
+<img src="res/example-solenoid-driver.png" title="Source: https://charleswilkinson.files.wordpress.com/2016/04/solenoid-driver.png" style="display: block; margin-left: auto; margin-right: auto">
+
+Some microcontrollers also offer the ability to enter a mode that consumes little to no power, for periods where the application program is waiting for some external signal to take action, though this feature is beyond the scope of this workshop.
+
+### Interrupts
+
+A feature common to most computers that is particularly relevant to microcontroller development is the notion of _interrupts_. An **Interrupt** is a configurable electrical signal that connects to the CPU. When configured, and the interrupt signal transitions from logic low to high, the CPU pauses and saves its current state, then immediately jumps to an **Interrupt Service Routine (ISR)**, a subroutine that runs only when interrupts are thrown. In this way, the normal operation of a program's flow of execution can be temporarily "interrupted" for some other (high priority) code to run, after which the regular program resumes.
+
+Interrupts are frequently used in microcontroller development to handle events that cannot be predicted by the regular execution of the program. Often times, interrupts are triggered for events that are time-sensitive and need to be handled very soon after the trigger is seen. At the same time, for systems relying on many interrupts, if one ISR takes too long to complete, another interrupt (of higher priority) may take control and prevent the initial ISR from completing on time. For these reasons, it is good practice to make ISRs take as short of time to execute as possible.
+
+Configuration (enabling) of interrupts often happens through a register containing **Interrupt Masks**. When the mask bit for a specific interrupt is set, that interrupt is enabled, and the trigger will fire on appropriate conditions. Some interrupts may be _non-maskable_.
+
+Since interrupts can alter the flow of execution of a program, and can access the same memory areas as the program, it is common to see use of the C `volatile` keyword when attempting to communicate between an ISR and non-interrupt-context code.
+
+_See the [ATMega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 23 - Reset and Interrupt Handling, and page 66 - Interrupts._
+
+### Watchdog
+
+For safety-critical applications, many microcontrollers offer a watchdog feature. A **Watchdog Timer** is a type of dead-man's switch that, when configured, must be serviced by writing to a register periodically. If enough time elapses between watchdog register accesses, a **Watchdog Timeout** occurs, and the watchdog resets the CPU, causing the application code to be completely restarted.
+
+Watchdog timers are excellent precautionary features: if the application program contains an error that would cause it to "lock up" into an infinite or arbitrarily long loop, the watchdog can reset the system quickly and resume regular operation. In essence, a watchdog timer is a means of recovering from critical failures.
+
+In silicon, watchdog timers can be implemented as simple counter registers that compare their values to a timeout value.
+
+_See the [ATMega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 60 - Watchdog Timer._
+
+### Programming
+
+More often than not, developing code for a microcontroller application will occur on a personal computer. This means the compiler toolchain is no longer on the same machine that it will be targeting. For PC application development, the compiler toolchain just writes the output position-independent binary to memory directly, but for MCU development, the toolchain no longer has access to the target's memory.
+
+To be able to load the compiled binary artifact onto the microcontroller, developers can use a **Programmer/Debugger**, a dedicated electronic device that connects to the MCU to access memory. In this case, the MCU offers a standard interface over which external devices can send commands that cause the MCU to modify its own program memory. The logic/behavior of this interface is baked into the hardware itself.
+
+The ATMega328p offers several interfaces capable of hosting Programmers. The first is the serial programming interface compatible with AVRISP (page 303) and the second is the debugWIRE interface (page 262). Some programming interfaces (like debugWIRE) have an additional set of commands that support live debugging (stepping through code execution manually, inspecting variables and arbitrary memory, etc).
+
+The other method of programming a microcontroller is possible only if the device already has a special kind of application already loaded - a _bootloader_. A **Bootloader** is an application that starts up immediately after a computer first receives power (boots), and has the special function of deciding the next program that will be loaded. Bootloaders typically allow the system to be programmed over non-standard interfaces (i.e. interfaces that hardware doesn't natively support).
+
+The Arduino Uno supports a unique kind of bootloader: instead of a program running directly on our target (the ATMega328p), a secondary MCU is exposed to the ATMega's programming interfaces, and acts as a bridge over a different communications interface (USB). So, the secondary MCU boots first, and then releases the ATMega from reset. If the secondary MCU receives a signal over USB to begin programming, it programs the ATMega instead, and then allows it to load. Unfortunately, this means it is not possible to do direct debugging on the Arduino Uno while using the bootloader interface without additional hardware.
+
+_See the [Arduino schematic](docs/Schematic__Arduino_Uno_Rev_3.pdf)._
+
+---
+
+For next time:
+- [ ] **Download and install** (all to the same directory):
+  - [ ] [AVRDude (programmer)](https://www.ladyada.net/learn/avr/index.html) (see the \<platform\> "Setup" sections)
+  - [ ] [Arduino bootloader AVRDude config file](https://raw.githubusercontent.com/arduino/arduino-flash-tools/master/tools_linux_64/avrdude/etc/avrdude.conf) - copy the raw text and save this locally as `avrdude.conf`
+  - [ ] [AVR 8-bit toolchain](https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers)
+  - [ ] [MFile makefile generator](http://www.sax.de/~joerg/mfile/)
+  - [ ] [Hairless MIDI-Serial Bridge](https://projectgus.github.io/hairless-midiserial/)
+  - [ ] (Windows users only) [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html)
+  - [ ] Google Chrome browser
+- [ ] **Create account** on [audiotool](https://www.audiotool.com/) and log in via Chrome only
 
 [Index](#contents)
 
 
-## Application: MIDI Controller Project
+## Microcontroller Hands-On Application: MIDI Controller Project
 
-`@todo figure this out`
+`@todo practicum: uploading code via toolchain to Arduino`
+`@todo additional walking through datasheet`
+`@todo overview of memory-mapped peripherals`
+`@todo talking through each peripheral we will use, with demo code`
+`.  @todo GPIO`
+`.  @todo timer/counter`
+`.  @todo ADC`
+`.  @todo UART (serial protocols, generally)`
+`@todo project architecture`
+`@todo project logic and application software`
 
 [Index](#contents)
+
+
+## Parting Words and Resources
+
+`@todo resources for each domain of study to continue on with`
+  `@todo especially the "Tetris from NAND" or whatever it's called`
+`@todo roadmap of what would logically follow this course`
+`@todo related Cal Poly courses and professors`
+`@todo contact info if anyone wants to get ahold of me`
