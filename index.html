@@ -261,7 +261,7 @@ pre[data-line] .line-highlight[data-end]:after {
     </head>
     <body for="html-export">
       <div class="mume markdown-preview  ">
-      <div><h1 class="mume-header" id="cal-poly-audio-engineering-society-workshop-microcontroller-theory-and-application">Cal Poly Audio Engineering Society Workshop: Microcontroller Theory and Application</h1>
+      <h1 class="mume-header" id="cal-poly-audio-engineering-society-workshop-microcontroller-theory-and-application">Cal Poly Audio Engineering Society Workshop: Microcontroller Theory and Application</h1>
 
 <h2 class="mume-header" id="contents">Contents</h2>
 
@@ -1995,23 +1995,36 @@ uint64_t <span class="token function">getCpuTimeMs</span><span class="token punc
 <p>The Arduino Uno supports a unique kind of bootloader: instead of a program running directly on our target (the ATMega328p), a secondary MCU is exposed to the ATMega&apos;s programming interfaces, and acts as a bridge over a different communications interface (USB). So, the secondary MCU boots first, and then releases the ATMega from reset. If the secondary MCU receives a signal over USB to begin programming, it programs the ATMega instead, and then allows it to load. Unfortunately, this means it is not possible to do direct debugging on the Arduino Uno while using the bootloader interface without additional hardware.</p>
 <p><em>See the <a href="docs/Schematic__Arduino_Uno_Rev_3.pdf">Arduino schematic</a>.</em></p>
 <hr>
-<p>For next time:</p>
-<ul>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> <strong>Download and install</strong> (all to the same directory):
-<ul>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> <a href="https://www.ladyada.net/learn/avr/index.html">AVRDude (programmer)</a> (see the &lt;platform&gt; &quot;Setup&quot; sections)</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> <a href="https://raw.githubusercontent.com/arduino/arduino-flash-tools/master/tools_linux_64/avrdude/etc/avrdude.conf">Arduino bootloader AVRDude config file</a> - copy the raw text and save this locally as <code>avrdude.conf</code></li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> <a href="https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers">AVR 8-bit toolchain</a></li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> <a href="http://www.sax.de/~joerg/mfile/">MFile makefile generator</a></li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> <a href="https://projectgus.github.io/hairless-midiserial/">Hairless MIDI-Serial Bridge</a></li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> (Windows users only) <a href="https://www.tobias-erichsen.de/software/loopmidi.html">loopMIDI</a></li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> Google Chrome browser</li>
-</ul>
-</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox"> <strong>Create account</strong> on <a href="https://www.audiotool.com/">audiotool</a> and log in via Chrome only</li>
-</ul>
+<p>Needed tools for our development projects:</p>
+<p><strong>I. Install Toolchain</strong></p>
+<p>For Linux:</p>
+<ol>
+<li><code>sudo apt install avrdude gcc-avr avr-libc make</code></li>
+<li>Make sure everything is on the path</li>
+<li>Make sure avrdude can talk to the arduino without modifications to the config file</li>
+</ol>
+<p>For Mac:</p>
+<ol>
+<li>Download and install <a href="https://www.obdev.at/products/crosspack/index.html">CrossPack</a></li>
+</ol>
+<p>For Windows:</p>
+<ol>
+<li>Follow <a href="http://fab.cba.mit.edu/classes/863.16/doc/projects/ftsmin/windows_avr.html">these instructions</a><br>
+a) For the Atmel GNU Toolchain, use <a href="https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers">this link</a> instead. Also rename the folder to <code>avr8-gnu-toolchain</code> when placing in <code>C:\Program Files</code>.<br>
+b) Skip installing drivers for the programmer.<br>
+c) Skip avrdude sanity check (we&apos;ll do this live).</li>
+<li>When testing the toolchain, make sure you do so in <code>git bash</code> rather than <code>cmd</code>.</li>
+</ol>
+<p><strong>II. Install Other Software</strong></p>
+<p>For all systems:</p>
+<ol>
+<li>Download and install <a href="https://projectgus.github.io/hairless-midiserial/">Hairless MIDI-Serial Bridge</a>.<br>
+a) For WIndows users only, also download and install <a href="https://www.tobias-erichsen.de/software/loopmidi.html">loopMIDI</a>.</li>
+<li>Download and install Google Chrome browser.</li>
+<li>Create account on <a href="https://www.audiotool.com/">audiotool</a> and log in via Chrome only</li>
+</ol>
 <p><a href="#contents">Index</a></p>
-</div>
+
       </div>
       
       

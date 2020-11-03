@@ -14,8 +14,6 @@
 - [Computer Architecture](#computer-architecture)
 - [High-Level Language Programming (with C)](#high-level-language-programming-with-c)
 - [Microcontroller Theory](#microcontroller-theory)
-- [Microcontroller Hands-On Application: MIDI Controller Project](#microcontroller-hands-on-application-midi-controller-project)
-- [Parting Words and Resources](#parting-words-and-resources)
 
 <!-- /TOC -->
 
@@ -1571,24 +1569,18 @@ _See the [Arduino schematic](docs/Schematic__Arduino_Uno_Rev_3.pdf)._
 
 ---
 
-For next time:
-- [ ] **Download and install** (all to the same directory):
-  - [ ] [AVRDude (programmer)](https://www.ladyada.net/learn/avr/index.html) (see the \<platform\> "Setup" sections)
-  - [ ] [Arduino bootloader AVRDude config file](https://raw.githubusercontent.com/arduino/arduino-flash-tools/master/tools_linux_64/avrdude/etc/avrdude.conf) - copy the raw text and save this locally as `avrdude.conf`
-  - [ ] [AVR 8-bit toolchain](https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers)
-  - [ ] [MFile makefile generator](http://www.sax.de/~joerg/mfile/)
-  - [ ] [Hairless MIDI-Serial Bridge](https://projectgus.github.io/hairless-midiserial/)
-  - [ ] (Windows users only) [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html)
-  - [ ] Google Chrome browser
-- [ ] **Create account** on [audiotool](https://www.audiotool.com/) and log in via Chrome only
+Needed tools for our development projects:
 
-[Index](#contents)
+**I. Install Toolchain**
 
+For Linux:
+1) `sudo apt install avrdude gcc-avr avr-libc make`
+2) Test commands `make`, `avrdude`, and `avr-gcc` to make sure they have been correctly added to the environment PATH. If they aren't visible, update your PATH variable accordingly.
+3) Make sure avrdude can talk to the arduino without modifications to the config file.
+   a) Use `lsusb` to find the Arduino connected to a serial port `ttyS<port>`.
+   b) Run command `avrdude -c arduino -v -V -p atmega328p - p ttyS<port> -b 115200 -D -e` and make sure to replace "\<port\>" with the port identified via `lsusb`.
+   c) Make sure `avrdude` throws no errors syaing it can't connect to the Arduino.
 
-## Microcontroller Hands-On Application: MIDI Controller Project
-
-`@todo practicum: uploading code via toolchain to Arduino`
-`@todo additional walking through datasheet`
 `@todo overview of memory-mapped peripherals`
 `@todo talking through each peripheral we will use, with demo code`
 `.  @todo GPIO`
