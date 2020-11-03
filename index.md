@@ -1610,6 +1610,33 @@ For all systems:
 [Index](#contents)
 
 
+## Microcontroller Hands-On Application: MIDI Controller Project
+
+`@todo pull in info I already found in Desktop / AES Talk Materials (especially for Make, build process, bootloader, and MIDI)`
+
+- `@todo practicum: uploading code via toolchain to Arduino`
+  - `@todo this image somewhere: ` <img src = "res/diagram-arduino-avr-gcc.png" title="Source: https://balau82.files.wordpress.com/2011/03/arduino_avr_gcc.png" width="40%">
+  - `@todo this image somewhere: ` <img src="res/example-simple-avr.gif" title="Source: https://www.avrfreaks.net/sites/default/files/styles/thumbnail/public/pictures/picture-28397-1517303903.gif?itok=P0hHTO_z">
+  - possibly reference [this article](https://balau82.wordpress.com/2011/03/29/programming-arduino-uno-in-pure-c/)
+  - link to [makefile](https://makefiletutorial.com/) [tutorials](https://cs.colby.edu/maxwell/courses/tutorials/maketutor/)
+- `@todo additional walking through datasheet`
+- `@todo overview of memory-mapped peripherals, see datasheet page 15`
+- `@todo talking through each peripheral we will use, with demo code`
+  - `@todo GPIO, see datasheet page 84`
+  - `@todo timer/counter`
+  - `@todo ADC`
+  - `@todo UART (serial protocols, generally), see datasheet page 179`
+    - see [baud rate error tolerance](https://www.maximintegrated.com/en/design/technical-documents/tutorials/2/2141.html)
+    - see simpler [baud rate error tolerance](https://www.allaboutcircuits.com/technical-articles/the-uart-baud-rate-clock-how-accurate-does-it-need-to-be/)
+    - consider taking inspiration from [Arduino serial core](https://github.com/arduino/ArduinoCore-avr/blob/master/cores/arduino/HardwareSerial.cpp)
+- `@todo project architecture and features`
+- `@todo project logic and application software`
+  - discuss [MIDI messages](https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message)
+  - discuss difference between transport (hardware and framing) and protocol (data content)
+
+[Index](#contents)
+
+
 ## Parting Words and Resources
 
 `@todo resources for each domain of study to continue on with`
@@ -1617,3 +1644,5 @@ For all systems:
 `@todo roadmap of what would logically follow this course`
 `@todo related Cal Poly courses and professors`
 `@todo contact info if anyone wants to get ahold of me`
+
+[Index](#contents)
