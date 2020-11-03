@@ -1589,6 +1589,23 @@ For Linux:
 `.  @todo UART (serial protocols, generally)`
 `@todo project architecture`
 `@todo project logic and application software`
+For Mac:
+1) Download and install [CrossPack](https://www.obdev.at/products/crosspack/index.html)
+
+For Windows:
+1) Follow [these instructions](http://fab.cba.mit.edu/classes/863.16/doc/projects/ftsmin/windows_avr.html)
+   a) For the Atmel GNU Toolchain, use [this link](https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers) instead. Also rename the folder to `avr8-gnu-toolchain` when placing in `C:\Program Files`.
+   b) Skip installing drivers for the programmer.
+   c) Skip avrdude sanity check (we'll do this live).
+   d) When testing the toolchain, make sure you do so in `git bash` rather than `cmd`.
+
+**II. Install Other Software**
+
+For all systems:
+1) Download and install [Hairless MIDI-Serial Bridge](https://projectgus.github.io/hairless-midiserial/).
+   a) For WIndows users only, also download and install [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html).
+2) Download and install Google Chrome browser.
+3) Create account on [audiotool](https://www.audiotool.com/) and log in via Chrome only
 
 [Index](#contents)
 
