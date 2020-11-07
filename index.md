@@ -1589,6 +1589,7 @@ For Mac:
 For Windows:
 1) Follow [these instructions](http://fab.cba.mit.edu/classes/863.16/doc/projects/ftsmin/windows_avr.html)
    a) For the Atmel GNU Toolchain, use [this link](https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers) instead. Also rename the folder to `avr8-gnu-toolchain` when placing in `C:\Program Files`.
+   b) Instead of the listed avrdude link, use [this link](http://download.savannah.gnu.org/releases/avrdude/), targeting `avrdude-6.3-mingw32.zip`.
    b) Skip installing drivers for the programmer.
    c) Skip avrdude sanity check (we'll do this live).
    d) When testing the toolchain, make sure you do so in `git bash` rather than `cmd`.
@@ -1599,7 +1600,7 @@ For all systems:
 1) Download and install [Hairless MIDI-Serial Bridge](https://projectgus.github.io/hairless-midiserial/).
    a) For Windows users only, also download and install [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html).
 2) Download and install Google Chrome browser.
-3) Create account on [audiotool](https://www.audiotool.com/) and log in via Chrome only
+3) Create account on [audiotool](https://www.audiotool.com/) and log in via Chrome only.
 
 [Index](#contents)
 
@@ -1633,10 +1634,10 @@ The next step would be to set up the development environment and programming/deb
 To test `avrdude`'s connection:
 1) Plug the Arduino into your PC via USB cable.
 2) Identify the serial port associated with your Arduino:
-   1) For Mac and Linux users, run `lsusb`. The Arduino should appear as a USB device exposed as a serial port with form `ttyS<port>`.
+   1) For Mac and Linux users, run `lsusb`. IF that command is unavailable, try `ls /dev/tty.*` The Arduino should appear as a USB device exposed as a serial port with form `ttyS<port>`.
    2) For Windows, open the Device Manager. The Arduino should appear as a Port (COM & LPT) with form `COM<port>`.
 3) Test `avrdude`'s ability to see the Arduino by running the following command, which will erase the program memory on the Arduino:
-`avrdude -c arduino -v -V -p atmega328p -p <port> -b 115200 -D -e`
+`avrdude -c arduino -v -V -p atmega328p -P <port> -b 115200 -D -e`
 
 Generally, board bringup continues well into application writing, since many board functions can only be tested with the microcontroller in the loop (to drive complex actions).
 
@@ -1667,6 +1668,8 @@ The shortest description of the development process can be seen with a simple an
 <img src="res/example-simple-avr.gif" title="Source: https://www.avrfreaks.net/sites/default/files/styles/thumbnail/public/pictures/picture-28397-1517303903.gif">
 
 The process is documented in more detail [here](https://balau82.wordpress.com/2011/03/29/programming-arduino-uno-in-pure-c/).
+
+All of the source code and Makefiles for the demo projects can be downloaded from the [workshop repository](https://github.com/merberich/aes_microcontroller_workshop). Download the repo to your local machine, and navigate to the project folder to run with before trying the demo instructions. Note, for the Makefiles to be successful, you will need to edit the AVRDUDE_PORT variable in each Makefile to the serial port where your Arduino is connected.
 
 _Demo: example of compiling and programming via project 01-intro; pay attention to build artifacts._
 
@@ -1734,11 +1737,16 @@ See also: [GPIO Programming: Arduino / ATMega328p](https://www.arnabkumardas.com
 
 `@todo also see reference in [Arduino serial core](https://github.com/arduino/ArduinoCore-avr/blob/master/cores/arduino/HardwareSerial.cpp)`
 `@todo see reference driver here: https://github.com/ExploreEmbedded/ATmega32_ExploreUltraAvrDevKit/archive/master.zip`
+`@todo see http://exploreembedded.com/wiki/Serial_UART_Interface_with_AVR`
+`@todo see https://www.gadgetronicx.com/avr-serial-communication-uart/`
 
 #### Analog-to-Digital Converter (ADC)
 
 `@todo see datasheet page 246`
+`@todo see https://www.instructables.com/Introduction-to-ADC-in-AVR-Microcontroller-for-Beg/`
 `@todo see reference driver here: https://github.com/ExploreEmbedded/ATmega32_ExploreUltraAvrDevKit/archive/master.zip`
+
+`@todo optionally timers: http://www.avrbeginners.net/architecture/timers/timers.html`
 
 ### Project Application Logic
 

@@ -4,7 +4,7 @@
 #include <avr/io.h>
 #include <bit_tools.h>
 
-void GPIO__setDirection(GPIO__Pin pin, GPIO_PinDirection pinDir) {
+void GPIO__setDirection(GPIO__Pin pin, GPIO__PinDirection pinDir) {
   if (pinDir >= GPIO_PINDIR_MAX || pin >= GPIO_P_MAX) {
     return;  // Invalid cases
   }
@@ -31,7 +31,7 @@ void GPIO__setDirection(GPIO__Pin pin, GPIO_PinDirection pinDir) {
   }
 }
 
-void GPIO_toggle(GPIO__Pin pin) {
+void GPIO__toggle(GPIO__Pin pin) {
   if (pin >= GPIO_P_MAX) {
     return;  // Invalid cases
   }
@@ -58,7 +58,7 @@ void GPIO_toggle(GPIO__Pin pin) {
   }
 }
 
-bool GPIO_getLevel(GPIO__Pin pin) {
+bool GPIO__getLevel(GPIO__Pin pin) {
   if (pin >= GPIO_P_MAX) {
     return false;  // Invalid cases
   }
@@ -82,7 +82,7 @@ bool GPIO_getLevel(GPIO__Pin pin) {
   }
 }
 
-void GPIO_setLevel(GPIO__Pin pin, bool level) {
+void GPIO__setLevel(GPIO__Pin pin, bool level) {
   if (pin >= GPIO_P_MAX) {
     return;  // Invalid cases
   }

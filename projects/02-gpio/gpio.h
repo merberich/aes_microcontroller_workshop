@@ -19,21 +19,21 @@ typedef enum {
   GPIO_PINDIR_INPUT,
   GPIO_PINDIR_OUTPUT,
   GPIO_PINDIR_MAX  //! Number of directions (invalid value).
-} GPIO_PinDirection;
+} GPIO__PinDirection;
 
 
 //! Configure a pin with the specified pin direction.
-void GPIO__setDirection(GPIO__Pin pin, GPIO_PinDirection pinDir);
+void GPIO__setDirection(GPIO__Pin pin, GPIO__PinDirection pinDir);
 
 //! For pins in output mode, toggle the logic level.
 //! For pins in input mode, toggle between pull-up and high-impedance mode.
-void GPIO_toggle(GPIO__Pin pin);
+void GPIO__toggle(GPIO__Pin pin);
 
 //! Get the current logic level for a specific pin.
-bool GPIO_getLevel(GPIO__Pin pin);
+bool GPIO__getLevel(GPIO__Pin pin);
 
 //! For pins in output mode, set the logic level.
 //! For pins in input mode, if level is true, enter pull-up mode; if false, enter high-impedance.
-void GPIO_setLevel(GPIO__Pin pin, bool level);
+void GPIO__setLevel(GPIO__Pin pin, bool level);
 
 #endif  // GPIO_H

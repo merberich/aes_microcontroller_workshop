@@ -2015,6 +2015,7 @@ c) Make sure <code>avrdude</code> throws no errors syaing it can&apos;t connect 
 <ol>
 <li>Follow <a href="http://fab.cba.mit.edu/classes/863.16/doc/projects/ftsmin/windows_avr.html">these instructions</a><br>
 a) For the Atmel GNU Toolchain, use <a href="https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers">this link</a> instead. Also rename the folder to <code>avr8-gnu-toolchain</code> when placing in <code>C:\Program Files</code>.<br>
+b) Instead of the listed avrdude link, use <a href="http://download.savannah.gnu.org/releases/avrdude/">this link</a>, targeting <code>avrdude-6.3-mingw32.zip</code>.<br>
 b) Skip installing drivers for the programmer.<br>
 c) Skip avrdude sanity check (we&apos;ll do this live).<br>
 d) When testing the toolchain, make sure you do so in <code>git bash</code> rather than <code>cmd</code>.</li>
@@ -2025,7 +2026,7 @@ d) When testing the toolchain, make sure you do so in <code>git bash</code> rath
 <li>Download and install <a href="https://projectgus.github.io/hairless-midiserial/">Hairless MIDI-Serial Bridge</a>.<br>
 a) For Windows users only, also download and install <a href="https://www.tobias-erichsen.de/software/loopmidi.html">loopMIDI</a>.</li>
 <li>Download and install Google Chrome browser.</li>
-<li>Create account on <a href="https://www.audiotool.com/">audiotool</a> and log in via Chrome only</li>
+<li>Create account on <a href="https://www.audiotool.com/">audiotool</a> and log in via Chrome only.</li>
 </ol>
 <p><a href="#contents">Index</a></p>
 <h2 class="mume-header" id="microcontroller-hands-on-application-midi-controller-project">Microcontroller Hands-On Application: MIDI Controller Project</h2>
@@ -2055,12 +2056,12 @@ a) For Windows users only, also download and install <a href="https://www.tobias
 <li>Plug the Arduino into your PC via USB cable.</li>
 <li>Identify the serial port associated with your Arduino:
 <ol>
-<li>For Mac and Linux users, run <code>lsusb</code>. The Arduino should appear as a USB device exposed as a serial port with form <code>ttyS&lt;port&gt;</code>.</li>
+<li>For Mac and Linux users, run <code>lsusb</code>. IF that command is unavailable, try <code>ls /dev/tty.*</code> The Arduino should appear as a USB device exposed as a serial port with form <code>ttyS&lt;port&gt;</code>.</li>
 <li>For Windows, open the Device Manager. The Arduino should appear as a Port (COM &amp; LPT) with form <code>COM&lt;port&gt;</code>.</li>
 </ol>
 </li>
 <li>Test <code>avrdude</code>&apos;s ability to see the Arduino by running the following command, which will erase the program memory on the Arduino:<br>
-<code>avrdude -c arduino -v -V -p atmega328p -p &lt;port&gt; -b 115200 -D -e</code></li>
+<code>avrdude -c arduino -v -V -p atmega328p -P &lt;port&gt; -b 115200 -D -e</code></li>
 </ol>
 <p>Generally, board bringup continues well into application writing, since many board functions can only be tested with the microcontroller in the loop (to drive complex actions).</p>
 <h4 class="mume-header" id="iii-driver-development">III. Driver Development</h4>
@@ -2080,6 +2081,7 @@ a) For Windows users only, also download and install <a href="https://www.tobias
 <p>The shortest description of the development process can be seen with a simple animation:</p>
 <img src="res/example-simple-avr.gif" title="Source: https://www.avrfreaks.net/sites/default/files/styles/thumbnail/public/pictures/picture-28397-1517303903.gif">
 <p>The process is documented in more detail <a href="https://balau82.wordpress.com/2011/03/29/programming-arduino-uno-in-pure-c/">here</a>.</p>
+<p>All of the source code and Makefiles for the demo projects can be downloaded from the <a href="https://github.com/merberich/aes_microcontroller_workshop">workshop repository</a>. Download the repo to your local machine, and navigate to the project folder to run with before trying the demo instructions. Note, for the Makefiles to be successful, you will need to edit the AVRDUDE_PORT variable in each Makefile to the serial port where your Arduino is connected.</p>
 <p><em>Demo: example of compiling and programming via project 01-intro; pay attention to build artifacts.</em></p>
 <h3 class="mume-header" id="the-project-midi-controller">The Project: MIDI Controller</h3>
 

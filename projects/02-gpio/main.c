@@ -9,13 +9,13 @@
 #define INPUT_PIN GPIO_PB4
 
 int main(void) {
-  GPIO_setLevel(LED_PIN, false);
+  GPIO__setLevel(LED_PIN, false);
   GPIO__setDirection(LED_PIN, GPIO_PINDIR_OUTPUT);
 
-  GPIO_setLevel(INPUT_PIN, false);
+  GPIO__setLevel(INPUT_PIN, false);
   GPIO__setDirection(INPUT_PIN, GPIO_PINDIR_INPUT);
 
   while (1) {
-    GPIO_setLevel(LED_PIN, GPIO_getLevel(INPUT_PIN));
+    GPIO__setLevel(LED_PIN, GPIO__getLevel(INPUT_PIN));
   }
 }
