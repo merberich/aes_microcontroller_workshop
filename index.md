@@ -14,6 +14,8 @@
 - [Computer Architecture](#computer-architecture)
 - [High-Level Language Programming (with C)](#high-level-language-programming-with-c)
 - [Microcontroller Theory](#microcontroller-theory)
+- [Microcontroller Hands-On Application: MIDI Controller Project](#microcontroller-hands-on-application-midi-controller-project)
+- [Parting Words and Resources](#parting-words-and-resources)
 
 <!-- /TOC -->
 
