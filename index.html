@@ -2000,8 +2000,11 @@ uint64_t <span class="token function">getCpuTimeMs</span><span class="token punc
 <p>For Linux:</p>
 <ol>
 <li><code>sudo apt install avrdude gcc-avr avr-libc make</code></li>
-<li>Make sure everything is on the path</li>
-<li>Make sure avrdude can talk to the arduino without modifications to the config file</li>
+<li>Test commands <code>make</code>, <code>avrdude</code>, and <code>avr-gcc</code> to make sure they have been correctly added to the environment PATH. If they aren&apos;t visible, update your PATH variable accordingly.</li>
+<li>Make sure avrdude can talk to the arduino without modifications to the config file.<br>
+a) Use <code>lsusb</code> to find the Arduino connected to a serial port <code>ttyS&lt;port&gt;</code>.<br>
+b) Run command <code>avrdude -c arduino -v -V -p atmega328p -p ttyS&lt;port&gt; -b 115200 -D -e</code> and make sure to replace &quot;&lt;port&gt;&quot; with the port identified via <code>lsusb</code>.<br>
+c) Make sure <code>avrdude</code> throws no errors syaing it can&apos;t connect to the Arduino.</li>
 </ol>
 <p>For Mac:</p>
 <ol>
@@ -2012,17 +2015,119 @@ uint64_t <span class="token function">getCpuTimeMs</span><span class="token punc
 <li>Follow <a href="http://fab.cba.mit.edu/classes/863.16/doc/projects/ftsmin/windows_avr.html">these instructions</a><br>
 a) For the Atmel GNU Toolchain, use <a href="https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers">this link</a> instead. Also rename the folder to <code>avr8-gnu-toolchain</code> when placing in <code>C:\Program Files</code>.<br>
 b) Skip installing drivers for the programmer.<br>
-c) Skip avrdude sanity check (we&apos;ll do this live).</li>
-<li>When testing the toolchain, make sure you do so in <code>git bash</code> rather than <code>cmd</code>.</li>
+c) Skip avrdude sanity check (we&apos;ll do this live).<br>
+d) When testing the toolchain, make sure you do so in <code>git bash</code> rather than <code>cmd</code>.</li>
 </ol>
 <p><strong>II. Install Other Software</strong></p>
 <p>For all systems:</p>
 <ol>
 <li>Download and install <a href="https://projectgus.github.io/hairless-midiserial/">Hairless MIDI-Serial Bridge</a>.<br>
-a) For WIndows users only, also download and install <a href="https://www.tobias-erichsen.de/software/loopmidi.html">loopMIDI</a>.</li>
+a) For Windows users only, also download and install <a href="https://www.tobias-erichsen.de/software/loopmidi.html">loopMIDI</a>.</li>
 <li>Download and install Google Chrome browser.</li>
 <li>Create account on <a href="https://www.audiotool.com/">audiotool</a> and log in via Chrome only</li>
 </ol>
+<p><a href="#contents">Index</a></p>
+<h2 class="mume-header" id="microcontroller-hands-on-application-midi-controller-project">Microcontroller Hands-On Application: MIDI Controller Project</h2>
+
+<h3 class="mume-header" id="microcontroller-development-process">Microcontroller Development Process</h3>
+
+<h4 class="mume-header" id="i-tool-selection">I. Tool Selection</h4>
+
+<p>So, we have all of the tools necessary to get a microcontroller doing simple calculations. Now, for a given project, we need to pull together the toolchain we will use in practice to build and test our application.</p>
+<p>For the project we&apos;ll be putting together, I&apos;ve selected almost exclusively open-source cross-platform tools that make it easier to develop in any environment.</p>
+<p>In sum, for development on the ATMega328p we have:</p>
+<ul>
+<li><code>avr-libc</code>: an open-source library for supporting C functionality and common utilities, as well as basic hardware abstraction on AVR chips. Library headers are documented on the <a href="https://nongnu.org/avr-libc/user-manual/modules.html">AVR-libc reference page</a>.</li>
+<li><code>avr-gcc</code>: an open-source compiler/assembler/linker suite based on <code>gcc</code> (GNU C Compiler) suite that is specifically devoted to the AVR ISA. Behavior is detailed on the <a href="https://gcc.gnu.org/wiki/avr-gcc">AVR-GCC wiki</a>, and command line options are documented in <a href="https://www.nongnu.org/avr-libc/user-manual/using_tools.html">AVR-libc</a>.</li>
+<li><code>avrdude</code>: an open-source programmer user interface that can control various hardware programmers, which can also talk to the Arduino bootloader. A quick tutorial and command line options are available <a href="https://www.ladyada.net/learn/avr/avrdude.html">here</a>.</li>
+<li><code>make</code>: an open-source program to batch repeatable terminal commands together in &quot;Makefiles&quot;, which is useful for automating software/firmware builds. Makefile formatting is described in detail in the <a href="https://makefiletutorial.com/">Makefile Tutorial</a>, or via the <a href="https://cs.colby.edu/maxwell/courses/tutorials/maketutor/">Makefile quickstart</a>.</li>
+<li>Any text editor you are comfortable with, for writing the C code.</li>
+</ul>
+<p>Displayed visually, this is the general idea behind the toolchain:<br>
+<img src="res/diagram-arduino-avr-gcc.png" title="Source: https://balau82.files.wordpress.com/2011/03/arduino_avr_gcc.png" width="40%"></p>
+<h4 class="mume-header" id="ii-board-bringup">II. Board Bringup</h4>
+
+<p>Typically developing applications with microcontrollers works hand-in-hand with development of a novel printed circuit board (PCB), so the system has to be verified electrically before we can be assured that the microcontroller will be able to accomplish tasks that rely on the circuit. Given that we&apos;re using the Arduino as our target board, the external electronics have already been thoroughly debugged by the open source community, so we don&apos;t have to do that verification.</p>
+<p>The next step would be to set up the development environment and programming/debugging connections to ensure we can talk to the board. Since we are using bare development tools via the command line, I&apos;ll be providing the default commands we will use for development. We can, however, verify our programmer functionality.</p>
+<p>To test <code>avrdude</code>&apos;s connection:</p>
+<ol>
+<li>Plug the Arduino into your PC via USB cable.</li>
+<li>Identify the serial port associated with your Arduino:
+<ol>
+<li>For Mac and Linux users, run <code>lsusb</code>. The Arduino should appear as a USB device exposed as a serial port with form <code>ttyS&lt;port&gt;</code>.</li>
+<li>For Windows, open the Device Manager. The Arduino should appear as a Port (COM &amp; LPT) with form <code>COM&lt;port&gt;</code>.</li>
+</ol>
+</li>
+<li>Test <code>avrdude</code>&apos;s ability to see the Arduino by running the following command, which will erase the program memory on the Arduino:<br>
+<code>avrdude -c arduino -v -V -p atmega328p -p &lt;port&gt; -b 115200 -D -e</code></li>
+</ol>
+<p>Generally, board bringup continues well into application writing, since many board functions can only be tested with the microcontroller in the loop (to drive complex actions).</p>
+<h4 class="mume-header" id="iii-driver-development">III. Driver Development</h4>
+
+<p>Driver development involves writing modules of code that handle interactions with external systems. Drivers could therefore be used to represent either internal electrical subsystems within the microcontroller (accessed via the I/O Bus), or external electronics that are part of the board&apos;s circuit (connected to the microcontroller&apos;s I/O pins).</p>
+<p>Note that drivers are fundamentally different than application logic: the logic can likely be simulated on other machines, but drivers interact directly with hardware.</p>
+<p>Driver development involves interpreting the datasheet for specific functions, writing C code to interface with those functions, and then performing hardware-in-the-loop tests to validate the drivers. Engineers very likely drive parts of this process with the debugger, and inspect hardware registers to ensure correct functionality.</p>
+<p>In industry practice, it is very common to see libraries of drivers built up and re-used for commonly-used MCUs. Typically, hardware functions may be hidden behind a library known as a <strong>Hardware Abstraction Layer</strong>, which makes code referencing said library portable across different machines.</p>
+<h4 class="mume-header" id="iv-application-logic-development">IV. Application Logic Development</h4>
+
+<p>&quot;Application logic&quot; describes all of the code designed to work on top of drivers. It is often-times domain specific (with some exceptions, like operating system code or portable non-driver libraries).</p>
+<p>Application logic within the embedded systems field almost always follows some kind of master state machine (within which driver state machines operate). This state machine is typically the first part of the system architected based on end-user requirements.</p>
+<p>For very small applications, developers may choose to break down the distinction between drivers and application logic, especially in cases where code size is of critical importance, but this has become increasingly uncommon.</p>
+<p>Development of application logic involves simulating hardware interfaces by &quot;mocking&quot; their behavior, writing the logical code which follows the master state machine, and debugging either on-hardware or via simulator and test suite. Generally, hardware-in-the-loop tests only occur when both the application logic and drivers for a particular feature have been completed. When all drivers and application logic are complete, full system testing can begin.</p>
+<h4 class="mume-header" id="in-summary">In Summary</h4>
+
+<p>The shortest description of the development process can be seen with a simple animation:</p>
+<img src="res/example-simple-avr.gif" title="Source: https://www.avrfreaks.net/sites/default/files/styles/thumbnail/public/pictures/picture-28397-1517303903.gif">
+<p>The process is documented in more detail <a href="https://balau82.wordpress.com/2011/03/29/programming-arduino-uno-in-pure-c/">here</a>.</p>
+<p><em>Demo: example of compiling and programming via project 01-intro; pay attention to build artifacts.</em></p>
+<h3 class="mume-header" id="the-project-midi-controller">The Project: MIDI Controller</h3>
+
+<p>Before we get into driver implementation, we need to discuss what drivers will be necessary to develop. To do so, we must first cover the requirements of our application logic: the scope and features of our project.</p>
+<p>Due to the time constraints we&apos;re working with, the project will be a simple <a href="https://en.wikipedia.org/wiki/MIDI_controller">MIDI controller</a>. <strong>MIDI</strong> is the Music Instrument Digital Interface, a standard that describes a communications protocol used in music equipment. A <strong>MIDI Controller</strong> is a device that sends signals to MIDI-compatible synthesizers, mixers, sequencers, filters, and other systems in order to produce sound. Note that a MIDI controller on its own does not produce sound - it instead commands other systems to produce or transform sound.</p>
+<p>Our MIDI controller will support four buttons and one analog knob (the single potentiometer in our <a href="https://www.amazon.com/LAFVIN-Starter-Controller-Resistor-Compatible/dp/B087RC7B8D/">kit</a>).</p>
+<p>To connect our MIDI controller to other systems, we need to support communicating MIDI messages. While our project could expose a MIDI connector (shown below) for communicating MIDI messages, this would require extra hardware not present in the kit, and would ultimately raise project cost.</p>
+<img src="res/example-midi-connector.jpg" title="Source: https://d2kmb61w1swc5t.cloudfront.net/images/09536-01.jpg" width="20%">
+<p>Instead, we will be communicating the MIDI messages as Serial data over Serial/USB, and then interpreting the messages as MIDI on the host PC.</p>
+<p>In total, we have to support the following functionality:</p>
+<ul>
+<li>reading button state</li>
+<li>reading analog potentiometer voltage</li>
+<li>communicating Serial data</li>
+<li>(optional) keep time</li>
+</ul>
+<p>Therefore the drivers we develop will need to support the hardware capable of providing each of these features.</p>
+<p>A similar project (as reference) can be found <a href="https://www.instructables.com/Arcade-Button-MIDI-Controller/">here</a>.</p>
+<h3 class="mume-header" id="hands-on-drivers">Hands-On Drivers</h3>
+
+<p>The electrical subcircuits we are interested in controlling as programmers are generally located on the microcontroller&apos;s internal I/O bus. These subcircuits (and any external circuits) which we target with Drivers are generally known as <strong>Peripherals</strong>. Internal peripherals are those directly on the I/O bus, and external peripherals are other integrated circuits / chips that communicate with the microcontroller through I/O pins.</p>
+<p>For the AVR architecture (and many others), Peripherals are given a programming interface via registers. These registers are also <em>memory-mapped</em>, meaning the peripheral registers are addressable as if they were part of the physical RAM segment.</p>
+<p>For a complete overview of all of the peripherals available on the ATMega328p, see the <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">datasheet</a> page 15 - Block Diagram.</p>
+<h4 class="mume-header" id="general-purpose-io-gpio">General Purpose I/O (GPIO)</h4>
+
+<p><em>See <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">Atmega328p datasheet</a> page 84.</em></p>
+<p><strong>General-Purpose I/O (GPIO)</strong> is the concept of treating an I/O pin as a purely digital signal. Pins treated as GPIO therefore have several supported configurations:</p>
+<ul>
+<li>Output (controllable logic high or low)
+<ul>
+<li>Push-Pull</li>
+</ul>
+</li>
+<li>Input (logic level at pin is readable)
+<ul>
+<li>Internal Pull-Up (normally logic high)</li>
+<li>High-Impedance (does not load pin voltage; follow external voltage)</li>
+</ul>
+</li>
+</ul>
+<p>The ATMega328p exposes three types of registers for each collection of 8 pins (referred to as <em>PORTs</em>):</p>
+<ul>
+<li><code>DDRx</code>: Data Direction Register for PORT x. When bit is set, the pin is configured as an output pin. When cleared, the pin is configured as an input pin.</li>
+<li><code>PORTx</code>: PORT Register for PORT x. When the pin is configured as an output pin, setting or clearing its corresponding bit in <code>PORTx</code> sets its logic level. When the pin is configured as an input pin, setting its corresponding bit in <code>PORTx</code> enables pull-up, and clearing it enables high-impedance mode.</li>
+<li><code>PINx</code>: PIN Register for PORT x. Writing a logic one to a bit in this register toggles  <code>PORTx</code> at the corresponding bit. Reading from this register should always reflect the current logic level on the pin.</li>
+</ul>
+<p>We will be using GPIO functionality on the ATMega328p to support the button inputs needed on the MIDI controller. Also worth note, the &quot;01-intro&quot; project performs the LED blink by setting the GPIO registers.</p>
+<p><em>Demo: GPIO project.</em></p>
+<p>See also: <a href="https://www.arnabkumardas.com/arduino-tutorial/gpio-programming/">GPIO Programming: Arduino / ATMega328p</a>.</p>
 <p><a href="#contents">Index</a></p>
 
       </div>
