@@ -1472,9 +1472,9 @@ Now that we have an understanding of the underlying concepts that go into design
 
 A **Microcontroller** (abbreviated MCU) is a small, relatively low-power computer that has dedicated I/O hardware fit for specific purposes, which is implemented all on a single integrated circuit. Microcontrollers are generally intended to function in specific applications, and the I/O hardware for a given MCU will be a set selected for its field of use. Microcontrollers may expose I/O interfaces externally via pins on the IC to expand and connect to other kinds of systems as well (including breaking out features like memory, power supply, and generic communication).
 
-Unfortunately, each MCU design is different enough that they are difficult to talk about generally. From this point on, examples will refer to the [Atmel/Microchip ATMega328p](https://www.microchip.com/wwwproducts/en/ATMEGA328P), which is the microcontroller that drives the Arduino Uno, the single-board computer we will be using for the hands-on project.
+Unfortunately, each MCU design is different enough that they are difficult to talk about generally. From this point on, examples will refer to the [Atmel/Microchip ATmega328p](https://www.microchip.com/wwwproducts/en/ATMEGA328P), which is the microcontroller that drives the Arduino Uno, the single-board computer we will be using for the hands-on project.
 
-_Demo: Trace through [ATMega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) while discussing this section._
+_Demo: Trace through [ATmega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) while discussing this section._
 
 ### Clocking and Time Measurement
 
@@ -1482,7 +1482,7 @@ Previously we had mentioned the fact that all parts of the instruction cycle occ
 
 In a microcontroller, the CPU clock is not the only clock to consider. The CPU may choose to divide the clock rate to send lower frequency (but still synchronized) clock signals to other devices on the MCU. Additionally, for most microcontrollers, both the CPU clock and all other clocks are configurable via _prescaler_ registers. A prescaler is a digital logic block that divides a clock signal's frequency by a factor of 2, depending on the prescaler value.
 
-_See [ATMega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 36 - System Clock and Clock Options._
+_See [ATmega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 36 - System Clock and Clock Options._
 
 For many applications, it is necessary for the microcontroller to be able to measure relative passage of time. If the microcontroller's clock source is stable and accurate enough, the CPU clock can be used to gauge passage of time.
 
@@ -1517,15 +1517,15 @@ void func() {
 
 Microcontrollers, like any other computer, require a power source. Microcontrollers are generally rated for some nominal "operating voltage" range, which should match or slightly exceed the logic level range on its external I/O pins. Generally, the highest CPU clock rates supported by the circuit implementation are only achievable at the higher end of the operating voltage range.
 
-For the ATMega328p, this operating voltage range is 1.8-5.5V, which is commonly considered the "5V logic level".
+For the ATmega328p, this operating voltage range is 1.8-5.5V, which is commonly considered the "5V logic level".
 
-Microcontrollers also typically require very steady current and voltage level provided to them to ensure smooth operation. This often requires an external power supply (a discrete electrical element or combination of elements). The Arduino Uno, for instance, provides a voltage regulator that can accept a 7-12V range as input, and provides a steady 5V to the ATMega328p.
+Microcontrollers also typically require very steady current and voltage level provided to them to ensure smooth operation. This often requires an external power supply (a discrete electrical element or combination of elements). The Arduino Uno, for instance, provides a voltage regulator that can accept a 7-12V range as input, and provides a steady 5V to the ATmega328p.
 
 _See the [Arduino schematic](docs/Schematic__Arduino_Uno_Rev_3.pdf)._
 
-Apart from consuming power, microcontrollers may occasionally be required to supply power for some applications. Unlike general electrical circuits, microcontrollers are not designed to source high amounts of current. The ATMega328p in particular can only source up to 40mA DC on each of the I/O pins.
+Apart from consuming power, microcontrollers may occasionally be required to supply power for some applications. Unlike general electrical circuits, microcontrollers are not designed to source high amounts of current. The ATmega328p in particular can only source up to 40mA DC on each of the I/O pins.
 
-_See the [ATMega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 308 - Electrical Characteristics._
+_See the [ATmega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 308 - Electrical Characteristics._
 
 For applications that need to drive high-power external electrical elements, it is therefore necessary to use the I/O pins on a microcontroller only as control signals. Recall that transistors in their most generic use act as switches. There are specific transistors known as _power transistors_ that are capable of passing high current. For high-power applications, it is common to use microcontrollers to provide the switching current that allows a power transistor to open or close. In this case, the power transistor drives the high-power electronics directly, so the digital electronics no longer need to source high current.
 
@@ -1543,7 +1543,7 @@ Configuration (enabling) of interrupts often happens through a register containi
 
 Since interrupts can alter the flow of execution of a program, and can access the same memory areas as the program, it is common to see use of the C `volatile` keyword when attempting to communicate between an ISR and non-interrupt-context code.
 
-_See the [ATMega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 23 - Reset and Interrupt Handling, and page 66 - Interrupts._
+_See the [ATmega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 23 - Reset and Interrupt Handling, and page 66 - Interrupts._
 
 ### Watchdog
 
@@ -1553,7 +1553,7 @@ Watchdog timers are excellent precautionary features: if the application program
 
 In silicon, watchdog timers can be implemented as simple counter registers that compare their values to a timeout value.
 
-_See the [ATMega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 60 - Watchdog Timer._
+_See the [ATmega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 60 - Watchdog Timer._
 
 ### Programming
 
@@ -1561,11 +1561,11 @@ More often than not, developing code for a microcontroller application will occu
 
 To be able to load the compiled binary artifact onto the microcontroller, developers can use a **Programmer/Debugger**, a dedicated electronic device that connects to the MCU to access memory. In this case, the MCU offers a standard interface over which external devices can send commands that cause the MCU to modify its own program memory. The logic/behavior of this interface is baked into the hardware itself.
 
-The ATMega328p offers several interfaces capable of hosting Programmers. The first is the serial programming interface compatible with AVRISP (page 303) and the second is the debugWIRE interface (page 262). Some programming interfaces (like debugWIRE) have an additional set of commands that support live debugging (stepping through code execution manually, inspecting variables and arbitrary memory, etc).
+The ATmega328p offers several interfaces capable of hosting Programmers. The first is the serial programming interface compatible with AVRISP (page 303) and the second is the debugWIRE interface (page 262). Some programming interfaces (like debugWIRE) have an additional set of commands that support live debugging (stepping through code execution manually, inspecting variables and arbitrary memory, etc).
 
 The other method of programming a microcontroller is possible only if the device already has a special kind of application already loaded - a _bootloader_. A **Bootloader** is an application that starts up immediately after a computer first receives power (boots), and has the special function of deciding the next program that will be loaded. Bootloaders typically allow the system to be programmed over non-standard interfaces (i.e. interfaces that hardware doesn't natively support).
 
-The Arduino Uno supports a unique kind of bootloader: instead of a program running directly on our target (the ATMega328p), a secondary MCU is exposed to the ATMega's programming interfaces, and acts as a bridge over a different communications interface (USB). So, the secondary MCU boots first, and then releases the ATMega from reset. If the secondary MCU receives a signal over USB to begin programming, it programs the ATMega instead, and then allows it to load. Unfortunately, this means it is not possible to do direct debugging on the Arduino Uno while using the bootloader interface without additional hardware.
+The Arduino Uno supports a unique kind of bootloader: instead of a program running directly on our target (the ATmega328p), a secondary MCU is exposed to the ATmega's programming interfaces, and acts as a bridge over a different communications interface (USB). So, the secondary MCU boots first, and then releases the ATmega from reset. If the secondary MCU receives a signal over USB to begin programming, it programs the ATmega instead, and then allows it to load. Unfortunately, this means it is not possible to do direct debugging on the Arduino Uno while using the bootloader interface without additional hardware.
 
 _See the [Arduino schematic](docs/Schematic__Arduino_Uno_Rev_3.pdf)._
 
@@ -1615,7 +1615,7 @@ So, we have all of the tools necessary to get a microcontroller doing simple cal
 
 For the project we'll be putting together, I've selected almost exclusively open-source cross-platform tools that make it easier to develop in any environment.
 
-In sum, for development on the ATMega328p we have:
+In sum, for development on the ATmega328p we have:
 - `avr-libc`: an open-source library for supporting C functionality and common utilities, as well as basic hardware abstraction on AVR chips. Library headers are documented on the [AVR-libc reference page](https://nongnu.org/avr-libc/user-manual/modules.html).
 - `avr-gcc`: an open-source compiler/assembler/linker suite based on `gcc` (GNU C Compiler) suite that is specifically devoted to the AVR ISA. Behavior is detailed on the [AVR-GCC wiki](https://gcc.gnu.org/wiki/avr-gcc), and command line options are documented in [AVR-libc](https://www.nongnu.org/avr-libc/user-manual/using_tools.html).
 - `avrdude`: an open-source programmer user interface that can control various hardware programmers, which can also talk to the Arduino bootloader. A quick tutorial and command line options are available [here](https://www.ladyada.net/learn/avr/avrdude.html).
@@ -1703,7 +1703,7 @@ The electrical subcircuits we are interested in controlling as programmers are g
 
 For the AVR architecture (and many others), Peripherals are given a programming interface via registers. These registers are also _memory-mapped_, meaning the peripheral registers are addressable as if they were part of the physical RAM segment.
 
-For a complete overview of all of the peripherals available on the ATMega328p, see the [datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 15 - Block Diagram.
+For a complete overview of all of the peripherals available on the ATmega328p, see the [datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 15 - Block Diagram.
 
 #### General Purpose I/O (GPIO)
 
@@ -1716,16 +1716,53 @@ _See [Atmega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328
   - Internal Pull-Up (normally logic high)
   - High-Impedance (does not load pin voltage; follow external voltage)
 
-The ATMega328p exposes three types of registers for each collection of 8 pins (referred to as _PORTs_):
+The ATmega328p exposes three types of registers for each collection of 8 pins (referred to as _PORTs_):
 - `DDRx`: Data Direction Register for PORT x. When bit is set, the pin is configured as an output pin. When cleared, the pin is configured as an input pin.
 - `PORTx`: PORT Register for PORT x. When the pin is configured as an output pin, setting or clearing its corresponding bit in `PORTx` sets its logic level. When the pin is configured as an input pin, setting its corresponding bit in `PORTx` enables pull-up, and clearing it enables high-impedance mode.
 - `PINx`: PIN Register for PORT x. Writing a logic one to a bit in this register toggles  `PORTx` at the corresponding bit. Reading from this register should always reflect the current logic level on the pin.
 
-We will be using GPIO functionality on the ATMega328p to support the button inputs needed on the MIDI controller. Also worth note, the "01-intro" project performs the LED blink by setting the GPIO registers.
+We will be using GPIO functionality on the ATmega328p to support the button inputs needed on the MIDI controller. Also worth note, the "01-intro" project performs the LED blink by setting the GPIO registers.
 
 _Demo: GPIO project._
 
-See also: [GPIO Programming: Arduino / ATMega328p](https://www.arnabkumardas.com/arduino-tutorial/gpio-programming/).
+See also: [GPIO Programming: Arduino / ATmega328p](https://www.arnabkumardas.com/arduino-tutorial/gpio-programming/).
+
+#### Analog-to-Digital Converter (ADC)
+
+So, we can read and write digital logic level, but what about analog values? Unfortunately, that goal is more complicated for a number of reasons.
+
+For sampling a digital signal, a digital system only really needs to buffer the signal into a one-bit register, which latches when the program attempts to perform a "read" on the pin. The register value will contain either a logic high or logic low, just like the signal.
+
+For sampling an analog signal, the computer must be able to map the analog value to a corresponding digital value. Generally, devices that perform this mapping are known as **Analog-to-Digital Converters (ADCs)** and can have many types of implementations both onboard ICs as peripherals, or as standalone chips.
+
+As discussed, digital systems need to deal with discrete values, and the process of quantization (representing continuous signals or values as discrete values) causes loss of accuracy. The ADC's resolution is therefore defined by the number of bits that can be used to describe a span of a signal (where the maximum accuracy may be one or more bits' worth of value). The other issue with representing values digitally is that it requires having finite bounds of representable values: a maximum and minimum representable value. For some implementations, this mapping can span negative voltages to positive voltages (double-ended), but commonly measurements are taken from zero to some maximum positive value (single-ended). For single-ended measurements, the maximum value is defined by the **Voltage Reference**.
+
+**ADC Capabilities on ATmega328p**
+
+_See [Atmega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 246._
+
+The ATmega328p has an ADC exposed as a peripheral, and has 10 bits of resolution, an accuracy of 2 Least Significant Bits (LSB), and can sample at a period ranging from 13 to 260 microseconds. The voltage reference can be configured between an internal reference (either 1.1V or AVCC - the analog voltage supply value) or the external AREF pin. The ATmega328p ADC peripheral also breaks out several ADC input pins, which can be selected to perform the ADC conversions one at a time via a multiplexer.
+
+The underlying circuit within the ATmega328p that allows analog to digital conversion uses a mechanism known as **Successive Approximation** (more info [here](https://en.wikipedia.org/wiki/Successive-approximation_ADC)). In this technique, the ADC generates an analog value from some known digital value using a Digital-to-Analog Converter (DAC) and then compares it to the sampled value using an analog comparator (possibly as simple as a properly-biased transistor). The ADC then uses this comparison to select the next search value iteratively, until each bit of the successive approximation register has been set via the comparator.
+
+<img src="res/diagram-successive-approx.png" title="Source: https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/SA_ADC_block_diagram.png/1024px-SA_ADC_block_diagram.png" width="45%">
+
+<img src="res/example-successive-approx.gif" title="Source: https://en.wikipedia.org/wiki/Successive-approximation_ADC#/media/File:4-bit_Successive_Approximation_DAC.gif" width="45%">
+
+**ATmega328p ADC Registers and Our Configuration**
+
+The ATmega328p offers six registers used for configuring ADC operation:
+- `ADMUX`: ADC Multiplexer Selection Register. This register allows us to select both the voltage reference and the channel selection.
+- `ADCSRA`: ADC Control and Status Register A. This register allows us to enable the ADC, kick off conversions, configure interrupts (if necessary), and select the ADC clock prescaler.
+- `ADCSRB`: ADC Control and Status Register B. This register allows for configuring ADC trigger sources if auto-triggering is enabled.
+- `ADCH` and `ADCL`: ADC Data Registers. Depending on if the result is left-aligned or right-aligned, `ADCH` contains the 2/8 most significant bits, and `ADCL` contains the 2/8 least significant bits (for 10-bit conversions). For 8-bit conversions that are left-aligned, the entire result is stored in `ADCH`.
+- `DIDR0`: Digital Input Disable Register 0. While digital inputs via GPIO functions is regularly enabled on the ATmega328p, setting the corresponding bit here will disable the digital input capability. This is mainly for power usage reduction while using the ADC.
+
+This project will use a single ADC channel configured at 8-bit resolution, using AVCC as reference. We will also use single triggered conversions rather than continuous conversion. ADC conversions will allow us to poll the voltage on the potentiometer used as our MIDI controller knob.
+
+_Demo: ADC project._
+
+See also: [ATmega328p ADC tutorial](https://embedds.com/adc-on-atmega328-part-1/).
 
 #### Universal Synchronous-Asynchronous Receiver-Transmitter (USART)
 
@@ -1739,12 +1776,6 @@ See also: [GPIO Programming: Arduino / ATMega328p](https://www.arnabkumardas.com
 `@todo see reference driver here: https://github.com/ExploreEmbedded/ATmega32_ExploreUltraAvrDevKit/archive/master.zip`
 `@todo see http://exploreembedded.com/wiki/Serial_UART_Interface_with_AVR`
 `@todo see https://www.gadgetronicx.com/avr-serial-communication-uart/`
-
-#### Analog-to-Digital Converter (ADC)
-
-`@todo see datasheet page 246`
-`@todo see https://www.instructables.com/Introduction-to-ADC-in-AVR-Microcontroller-for-Beg/`
-`@todo see reference driver here: https://github.com/ExploreEmbedded/ATmega32_ExploreUltraAvrDevKit/archive/master.zip`
 
 `@todo optionally timers: http://www.avrbeginners.net/architecture/timers/timers.html`
 
@@ -1764,6 +1795,8 @@ See also: [GPIO Programming: Arduino / ATMega328p](https://www.arnabkumardas.com
 
 - `@todo resources for each domain of study to continue on with`
   - `@todo especially the "Tetris from NAND" or whatever it's called`
+  - Shenzhen I/O on Steam
+  - anything by [Ben Eater](https://www.youtube.com/watch?v=2iURr3NBprc)
 - `@todo roadmap of what would logically follow this course`
 - `@todo related Cal Poly courses and professors`
 - `@todo contact info if anyone wants to get ahold of me`
