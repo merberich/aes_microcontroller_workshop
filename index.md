@@ -15,7 +15,7 @@
 - [High-Level Language Programming (with C)](#high-level-language-programming-with-c)
 - [Microcontroller Theory](#microcontroller-theory)
 - [Microcontroller Hands-On Application: MIDI Controller Project](#microcontroller-hands-on-application-midi-controller-project)
-- [Parting Words and Resources](#parting-words-and-resources)
+- [Further Reading](#further-reading)
 
 <!-- /TOC -->
 
@@ -1809,24 +1809,52 @@ _Demo: UART project via Arduino serial monitor._
 
 ### Project Application Logic
 
-- `@todo project logic and application software`
-- `@todo master state machine, driver state machines`
-- `@todo discuss [MIDI messages](https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message)`
-- `@todo discuss difference between transport (hardware and framing) and protocol (data content)`
-- `@todo configuration of final system with MIDI-Serial bridge`
-- `@todo final demo`
+We now have all of the tools we need to build a very simple MIDI controller!
+
+Our application hardware will be connected as follows:
+
+<img src="res/project-fritzing.png">
+
+Some notes on the electrical hardware connections:
+- LEDs are polar, meaning they will only light up if connected in the correct orientation. Pay close attention to the direction of the angled face inside the LED's plastic cover. The angled surface points in the direction of current flow to light up the LED.
+- Since the specified kit provides LEDs of different colors, you may want to apply a different colored LED to each button for clarity as to which note will be played.
+- The resistors laid out are 220 ohm resistors. In the kit specified, 220 ohms corresponds to the resistor with stripes: RED, RED, BLACK, BLACK, BROWN. The color distinctions are fairly hard to see, so make sure you pick out the correct ones.
+- The breadboard provided in the kit is broken into two halves; you will need additional jumpers connecting ground-ground and power-power on either half.
+
+Our application logic follow the shown state machine:
+
+<img src="res/project-state-machine.png">
+
+_See: project 05-midi-controller source._
+_See: [table of MIDI messages](https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message)._
+_See: [table of MIDI CC numbers](https://www.paulcecchettimusic.com/full-list-of-midi-cc-numbers/)._
+_See: [table of MIDI note numbers](http://computermusicresource.com/midikeys.html)._
+
+_Demo: final project._
+
+To set up the final project:
+- Connect hardware to the Arduino board as shown on the Fritzing diagram.
+- Build code and program the ATmega328p via source code in projects/05-midi-controller.
+- Launch "Hairless MIDI <-> Serial Bridge". For Windows users, also launch "loopMIDI".
+  - Configure the serial port to the Arduino UNO.
+  - Configure MIDI Out to either loopMIDI (for Windows) or the system's native MIDI interface.
+- In a new Google Chrome window, navigate to "audiotool.com" and log in or create a new account.
+  - Enter the studio.
+  - Start a new project.
+  - Delete all existing equipment in the studio and drop in the "Heisenberg" synth.
+  - Right-click on the Heisenberg synth, and select "learn MIDI keyboard". When prompted, press any of the buttons to have audiotool map our MIDI controller buttons to the specified synth channel.
+  - On any virtual knob, right click and select "learn MIDI controller". When prompted, turn the knob on the prototype to have audiotool map the knob to the virtual space.
+- Use the MIDI controller to make music!
 
 [Index](#contents)
 
 
-## Parting Words and Resources
+## Further Reading
 
-- `@todo resources for each domain of study to continue on with`
-  - `@todo especially the "Tetris from NAND" or whatever it's called`
-  - Shenzhen I/O on Steam
-  - anything by [Ben Eater](https://www.youtube.com/watch?v=2iURr3NBprc)
-- `@todo roadmap of what would logically follow this course`
-- `@todo related Cal Poly courses and professors`
-- `@todo contact info if anyone wants to get ahold of me`
+- [nand2tetris](https://www.nand2tetris.org/): a project describing computer element fundamentals which goes into far more depth than this workshop
+- [SHENZHEN I/O](https://store.steampowered.com/app/504210/SHENZHEN_IO/): a game that emulates the experience of developing digital logic systems with assembly
+- [Ben Eater](https://www.youtube.com/c/BenEater/videos): a very detailed but laid-back Youtube channel that covers hands-on computer hardware development, including theory
+- [EEVBlog](https://www.youtube.com/c/EevblogDave/videos): a mystery-of-the-day style Youtube channel covering Electrical and Mechanical engineering tips
+- [Andreas Speiss](https://www.youtube.com/c/AndreasSpiess/videos): a highlights-style Youtube channel discussing embedded systems practices, tools, and common prototyping hardware components
 
 [Index](#contents)

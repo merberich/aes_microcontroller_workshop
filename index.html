@@ -276,6 +276,7 @@ pre[data-line] .line-highlight[data-end]:after {
 <li><a href="#high-level-language-programming-with-c">High-Level Language Programming (with C)</a></li>
 <li><a href="#microcontroller-theory">Microcontroller Theory</a></li>
 <li><a href="#microcontroller-hands-on-application-midi-controller-project">Microcontroller Hands-On Application: MIDI Controller Project</a></li>
+<li><a href="#further-reading">Further Reading</a></li>
 </ul>
 <h2 class="mume-header" id="introduction">Introduction</h2>
 
@@ -1934,13 +1935,13 @@ Book_t<span class="token operator">*</span> p_a <span class="token operator">=</
 
 <p>Now that we have an understanding of the underlying concepts that go into designing a computer, we can finally revisit our first question: &quot;What is a microcontroller?&quot;</p>
 <p>A <strong>Microcontroller</strong> (abbreviated MCU) is a small, relatively low-power computer that has dedicated I/O hardware fit for specific purposes, which is implemented all on a single integrated circuit. Microcontrollers are generally intended to function in specific applications, and the I/O hardware for a given MCU will be a set selected for its field of use. Microcontrollers may expose I/O interfaces externally via pins on the IC to expand and connect to other kinds of systems as well (including breaking out features like memory, power supply, and generic communication).</p>
-<p>Unfortunately, each MCU design is different enough that they are difficult to talk about generally. From this point on, examples will refer to the <a href="https://www.microchip.com/wwwproducts/en/ATMEGA328P">Atmel/Microchip ATMega328p</a>, which is the microcontroller that drives the Arduino Uno, the single-board computer we will be using for the hands-on project.</p>
-<p><em>Demo: Trace through <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATMega328p datasheet</a> while discussing this section.</em></p>
+<p>Unfortunately, each MCU design is different enough that they are difficult to talk about generally. From this point on, examples will refer to the <a href="https://www.microchip.com/wwwproducts/en/ATMEGA328P">Atmel/Microchip ATmega328p</a>, which is the microcontroller that drives the Arduino Uno, the single-board computer we will be using for the hands-on project.</p>
+<p><em>Demo: Trace through <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATmega328p datasheet</a> while discussing this section.</em></p>
 <h3 class="mume-header" id="clocking-and-time-measurement">Clocking and Time Measurement</h3>
 
 <p>Previously we had mentioned the fact that all parts of the instruction cycle occur at a rate directed by the computer&apos;s CPU clock. As previously discussed, a computer&apos;s clock source can be generated either by internal or external physical elements (like piezoelectric crystal oscillators). Most microcontrollers provide a default (inaccurate) RC oscillator-based clock, but the optional ability to use an external crystal oscillator (within specific frequency ranges).</p>
 <p>In a microcontroller, the CPU clock is not the only clock to consider. The CPU may choose to divide the clock rate to send lower frequency (but still synchronized) clock signals to other devices on the MCU. Additionally, for most microcontrollers, both the CPU clock and all other clocks are configurable via <em>prescaler</em> registers. A prescaler is a digital logic block that divides a clock signal&apos;s frequency by a factor of 2, depending on the prescaler value.</p>
-<p><em>See <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATMega328p datasheet</a> page 36 - System Clock and Clock Options.</em></p>
+<p><em>See <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATmega328p datasheet</a> page 36 - System Clock and Clock Options.</em></p>
 <p>For many applications, it is necessary for the microcontroller to be able to measure relative passage of time. If the microcontroller&apos;s clock source is stable and accurate enough, the CPU clock can be used to gauge passage of time.</p>
 <p>The first method of time tracking is by using a <em>delay</em>, which causes the CPU to pause and take no action for a specified amount of CPU clock cycles.</p>
 <pre data-role="codeBlock" data-info="C" class="language-c"><span class="token keyword">void</span> <span class="token function">delayMs</span><span class="token punctuation">(</span>uint64_t time_ms<span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -1966,11 +1967,11 @@ uint64_t <span class="token function">getCpuTimeMs</span><span class="token punc
 </pre><h3 class="mume-header" id="power">Power</h3>
 
 <p>Microcontrollers, like any other computer, require a power source. Microcontrollers are generally rated for some nominal &quot;operating voltage&quot; range, which should match or slightly exceed the logic level range on its external I/O pins. Generally, the highest CPU clock rates supported by the circuit implementation are only achievable at the higher end of the operating voltage range.</p>
-<p>For the ATMega328p, this operating voltage range is 1.8-5.5V, which is commonly considered the &quot;5V logic level&quot;.</p>
-<p>Microcontrollers also typically require very steady current and voltage level provided to them to ensure smooth operation. This often requires an external power supply (a discrete electrical element or combination of elements). The Arduino Uno, for instance, provides a voltage regulator that can accept a 7-12V range as input, and provides a steady 5V to the ATMega328p.</p>
+<p>For the ATmega328p, this operating voltage range is 1.8-5.5V, which is commonly considered the &quot;5V logic level&quot;.</p>
+<p>Microcontrollers also typically require very steady current and voltage level provided to them to ensure smooth operation. This often requires an external power supply (a discrete electrical element or combination of elements). The Arduino Uno, for instance, provides a voltage regulator that can accept a 7-12V range as input, and provides a steady 5V to the ATmega328p.</p>
 <p><em>See the <a href="docs/Schematic__Arduino_Uno_Rev_3.pdf">Arduino schematic</a>.</em></p>
-<p>Apart from consuming power, microcontrollers may occasionally be required to supply power for some applications. Unlike general electrical circuits, microcontrollers are not designed to source high amounts of current. The ATMega328p in particular can only source up to 40mA DC on each of the I/O pins.</p>
-<p><em>See the <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATMega328p datasheet</a> page 308 - Electrical Characteristics.</em></p>
+<p>Apart from consuming power, microcontrollers may occasionally be required to supply power for some applications. Unlike general electrical circuits, microcontrollers are not designed to source high amounts of current. The ATmega328p in particular can only source up to 40mA DC on each of the I/O pins.</p>
+<p><em>See the <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATmega328p datasheet</a> page 308 - Electrical Characteristics.</em></p>
 <p>For applications that need to drive high-power external electrical elements, it is therefore necessary to use the I/O pins on a microcontroller only as control signals. Recall that transistors in their most generic use act as switches. There are specific transistors known as <em>power transistors</em> that are capable of passing high current. For high-power applications, it is common to use microcontrollers to provide the switching current that allows a power transistor to open or close. In this case, the power transistor drives the high-power electronics directly, so the digital electronics no longer need to source high current.</p>
 <img src="res/example-solenoid-driver.png" title="Source: https://charleswilkinson.files.wordpress.com/2016/04/solenoid-driver.png" style="display: block; margin-left: auto; margin-right: auto">
 <p>Some microcontrollers also offer the ability to enter a mode that consumes little to no power, for periods where the application program is waiting for some external signal to take action, though this feature is beyond the scope of this workshop.</p>
@@ -1980,20 +1981,20 @@ uint64_t <span class="token function">getCpuTimeMs</span><span class="token punc
 <p>Interrupts are frequently used in microcontroller development to handle events that cannot be predicted by the regular execution of the program. Often times, interrupts are triggered for events that are time-sensitive and need to be handled very soon after the trigger is seen. At the same time, for systems relying on many interrupts, if one ISR takes too long to complete, another interrupt (of higher priority) may take control and prevent the initial ISR from completing on time. For these reasons, it is good practice to make ISRs take as short of time to execute as possible.</p>
 <p>Configuration (enabling) of interrupts often happens through a register containing <strong>Interrupt Masks</strong>. When the mask bit for a specific interrupt is set, that interrupt is enabled, and the trigger will fire on appropriate conditions. Some interrupts may be <em>non-maskable</em>.</p>
 <p>Since interrupts can alter the flow of execution of a program, and can access the same memory areas as the program, it is common to see use of the C <code>volatile</code> keyword when attempting to communicate between an ISR and non-interrupt-context code.</p>
-<p><em>See the <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATMega328p datasheet</a> page 23 - Reset and Interrupt Handling, and page 66 - Interrupts.</em></p>
+<p><em>See the <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATmega328p datasheet</a> page 23 - Reset and Interrupt Handling, and page 66 - Interrupts.</em></p>
 <h3 class="mume-header" id="watchdog">Watchdog</h3>
 
 <p>For safety-critical applications, many microcontrollers offer a watchdog feature. A <strong>Watchdog Timer</strong> is a type of dead-man&apos;s switch that, when configured, must be serviced by writing to a register periodically. If enough time elapses between watchdog register accesses, a <strong>Watchdog Timeout</strong> occurs, and the watchdog resets the CPU, causing the application code to be completely restarted.</p>
 <p>Watchdog timers are excellent precautionary features: if the application program contains an error that would cause it to &quot;lock up&quot; into an infinite or arbitrarily long loop, the watchdog can reset the system quickly and resume regular operation. In essence, a watchdog timer is a means of recovering from critical failures.</p>
 <p>In silicon, watchdog timers can be implemented as simple counter registers that compare their values to a timeout value.</p>
-<p><em>See the <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATMega328p datasheet</a> page 60 - Watchdog Timer.</em></p>
+<p><em>See the <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">ATmega328p datasheet</a> page 60 - Watchdog Timer.</em></p>
 <h3 class="mume-header" id="programming">Programming</h3>
 
 <p>More often than not, developing code for a microcontroller application will occur on a personal computer. This means the compiler toolchain is no longer on the same machine that it will be targeting. For PC application development, the compiler toolchain just writes the output position-independent binary to memory directly, but for MCU development, the toolchain no longer has access to the target&apos;s memory.</p>
 <p>To be able to load the compiled binary artifact onto the microcontroller, developers can use a <strong>Programmer/Debugger</strong>, a dedicated electronic device that connects to the MCU to access memory. In this case, the MCU offers a standard interface over which external devices can send commands that cause the MCU to modify its own program memory. The logic/behavior of this interface is baked into the hardware itself.</p>
-<p>The ATMega328p offers several interfaces capable of hosting Programmers. The first is the serial programming interface compatible with AVRISP (page 303) and the second is the debugWIRE interface (page 262). Some programming interfaces (like debugWIRE) have an additional set of commands that support live debugging (stepping through code execution manually, inspecting variables and arbitrary memory, etc).</p>
+<p>The ATmega328p offers several interfaces capable of hosting Programmers. The first is the serial programming interface compatible with AVRISP (page 303) and the second is the debugWIRE interface (page 262). Some programming interfaces (like debugWIRE) have an additional set of commands that support live debugging (stepping through code execution manually, inspecting variables and arbitrary memory, etc).</p>
 <p>The other method of programming a microcontroller is possible only if the device already has a special kind of application already loaded - a <em>bootloader</em>. A <strong>Bootloader</strong> is an application that starts up immediately after a computer first receives power (boots), and has the special function of deciding the next program that will be loaded. Bootloaders typically allow the system to be programmed over non-standard interfaces (i.e. interfaces that hardware doesn&apos;t natively support).</p>
-<p>The Arduino Uno supports a unique kind of bootloader: instead of a program running directly on our target (the ATMega328p), a secondary MCU is exposed to the ATMega&apos;s programming interfaces, and acts as a bridge over a different communications interface (USB). So, the secondary MCU boots first, and then releases the ATMega from reset. If the secondary MCU receives a signal over USB to begin programming, it programs the ATMega instead, and then allows it to load. Unfortunately, this means it is not possible to do direct debugging on the Arduino Uno while using the bootloader interface without additional hardware.</p>
+<p>The Arduino Uno supports a unique kind of bootloader: instead of a program running directly on our target (the ATmega328p), a secondary MCU is exposed to the ATmega&apos;s programming interfaces, and acts as a bridge over a different communications interface (USB). So, the secondary MCU boots first, and then releases the ATmega from reset. If the secondary MCU receives a signal over USB to begin programming, it programs the ATmega instead, and then allows it to load. Unfortunately, this means it is not possible to do direct debugging on the Arduino Uno while using the bootloader interface without additional hardware.</p>
 <p><em>See the <a href="docs/Schematic__Arduino_Uno_Rev_3.pdf">Arduino schematic</a>.</em></p>
 <hr>
 <p>Needed tools for our development projects:</p>
@@ -2037,7 +2038,7 @@ a) For Windows users only, also download and install <a href="https://www.tobias
 
 <p>So, we have all of the tools necessary to get a microcontroller doing simple calculations. Now, for a given project, we need to pull together the toolchain we will use in practice to build and test our application.</p>
 <p>For the project we&apos;ll be putting together, I&apos;ve selected almost exclusively open-source cross-platform tools that make it easier to develop in any environment.</p>
-<p>In sum, for development on the ATMega328p we have:</p>
+<p>In sum, for development on the ATmega328p we have:</p>
 <ul>
 <li><code>avr-libc</code>: an open-source library for supporting C functionality and common utilities, as well as basic hardware abstraction on AVR chips. Library headers are documented on the <a href="https://nongnu.org/avr-libc/user-manual/modules.html">AVR-libc reference page</a>.</li>
 <li><code>avr-gcc</code>: an open-source compiler/assembler/linker suite based on <code>gcc</code> (GNU C Compiler) suite that is specifically devoted to the AVR ISA. Behavior is detailed on the <a href="https://gcc.gnu.org/wiki/avr-gcc">AVR-GCC wiki</a>, and command line options are documented in <a href="https://www.nongnu.org/avr-libc/user-manual/using_tools.html">AVR-libc</a>.</li>
@@ -2104,7 +2105,7 @@ a) For Windows users only, also download and install <a href="https://www.tobias
 
 <p>The electrical subcircuits we are interested in controlling as programmers are generally located on the microcontroller&apos;s internal I/O bus. These subcircuits (and any external circuits) which we target with Drivers are generally known as <strong>Peripherals</strong>. Internal peripherals are those directly on the I/O bus, and external peripherals are other integrated circuits / chips that communicate with the microcontroller through I/O pins.</p>
 <p>For the AVR architecture (and many others), Peripherals are given a programming interface via registers. These registers are also <em>memory-mapped</em>, meaning the peripheral registers are addressable as if they were part of the physical RAM segment.</p>
-<p>For a complete overview of all of the peripherals available on the ATMega328p, see the <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">datasheet</a> page 15 - Block Diagram.</p>
+<p>For a complete overview of all of the peripherals available on the ATmega328p, see the <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">datasheet</a> page 15 - Block Diagram.</p>
 <h4 class="mume-header" id="general-purpose-io-gpio">General Purpose I/O (GPIO)</h4>
 
 <p><em>See <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">Atmega328p datasheet</a> page 84.</em></p>
@@ -2122,15 +2123,120 @@ a) For Windows users only, also download and install <a href="https://www.tobias
 </ul>
 </li>
 </ul>
-<p>The ATMega328p exposes three types of registers for each collection of 8 pins (referred to as <em>PORTs</em>):</p>
+<p>The ATmega328p exposes three types of registers for each collection of 8 pins (referred to as <em>PORTs</em>):</p>
 <ul>
 <li><code>DDRx</code>: Data Direction Register for PORT x. When bit is set, the pin is configured as an output pin. When cleared, the pin is configured as an input pin.</li>
 <li><code>PORTx</code>: PORT Register for PORT x. When the pin is configured as an output pin, setting or clearing its corresponding bit in <code>PORTx</code> sets its logic level. When the pin is configured as an input pin, setting its corresponding bit in <code>PORTx</code> enables pull-up, and clearing it enables high-impedance mode.</li>
 <li><code>PINx</code>: PIN Register for PORT x. Writing a logic one to a bit in this register toggles  <code>PORTx</code> at the corresponding bit. Reading from this register should always reflect the current logic level on the pin.</li>
 </ul>
-<p>We will be using GPIO functionality on the ATMega328p to support the button inputs needed on the MIDI controller. Also worth note, the &quot;01-intro&quot; project performs the LED blink by setting the GPIO registers.</p>
+<p>We will be using GPIO functionality on the ATmega328p to support the button inputs needed on the MIDI controller. Also worth note, the &quot;01-intro&quot; project performs the LED blink by setting the GPIO registers.</p>
 <p><em>Demo: GPIO project.</em></p>
-<p>See also: <a href="https://www.arnabkumardas.com/arduino-tutorial/gpio-programming/">GPIO Programming: Arduino / ATMega328p</a>.</p>
+<p>See also: <a href="https://www.arnabkumardas.com/arduino-tutorial/gpio-programming/">GPIO Programming: Arduino / ATmega328p</a>.</p>
+<h4 class="mume-header" id="analog-to-digital-converter-adc">Analog-to-Digital Converter (ADC)</h4>
+
+<p>So, we can read and write digital logic level, but what about analog values? Unfortunately, that goal is more complicated for a number of reasons.</p>
+<p>For sampling a digital signal, a digital system only really needs to buffer the signal into a one-bit register, which latches when the program attempts to perform a &quot;read&quot; on the pin. The register value will contain either a logic high or logic low, just like the signal.</p>
+<p>For sampling an analog signal, the computer must be able to map the analog value to a corresponding digital value. Generally, devices that perform this mapping are known as <strong>Analog-to-Digital Converters (ADCs)</strong> and can have many types of implementations both onboard ICs as peripherals, or as standalone chips.</p>
+<p>As discussed, digital systems need to deal with discrete values, and the process of quantization (representing continuous signals or values as discrete values) causes loss of accuracy. The ADC&apos;s resolution is therefore defined by the number of bits that can be used to describe a span of a signal (where the maximum accuracy may be one or more bits&apos; worth of value). The other issue with representing values digitally is that it requires having finite bounds of representable values: a maximum and minimum representable value. For some implementations, this mapping can span negative voltages to positive voltages (double-ended), but commonly measurements are taken from zero to some maximum positive value (single-ended). For single-ended measurements, the maximum value is defined by the <strong>Voltage Reference</strong>.</p>
+<p><strong>ADC Capabilities on ATmega328p</strong></p>
+<p><em>See <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">Atmega328p datasheet</a> page 246.</em></p>
+<p>The ATmega328p has an ADC exposed as a peripheral, and has 10 bits of resolution, an accuracy of 2 Least Significant Bits (LSB), and can sample at a period ranging from 13 to 260 microseconds. The voltage reference can be configured between an internal reference (either 1.1V or AVCC - the analog voltage supply value) or the external AREF pin. The ATmega328p ADC peripheral also breaks out several ADC input pins, which can be selected to perform the ADC conversions one at a time via a multiplexer.</p>
+<p>The underlying circuit within the ATmega328p that allows analog to digital conversion uses a mechanism known as <strong>Successive Approximation</strong> (more info <a href="https://en.wikipedia.org/wiki/Successive-approximation_ADC">here</a>). In this technique, the ADC generates an analog value from some known digital value using a Digital-to-Analog Converter (DAC) and then compares it to the sampled value using an analog comparator (possibly as simple as a properly-biased transistor). The ADC then uses this comparison to select the next search value iteratively, until each bit of the successive approximation register has been set via the comparator.</p>
+<img src="res/diagram-successive-approx.png" title="Source: https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/SA_ADC_block_diagram.png/1024px-SA_ADC_block_diagram.png" width="45%">
+<img src="res/example-successive-approx.gif" title="Source: https://en.wikipedia.org/wiki/Successive-approximation_ADC#/media/File:4-bit_Successive_Approximation_DAC.gif" width="45%">
+<p><strong>ATmega328p ADC Registers and Our Configuration</strong></p>
+<p>The ATmega328p offers six registers used for configuring ADC operation:</p>
+<ul>
+<li><code>ADMUX</code>: ADC Multiplexer Selection Register. This register allows us to select both the voltage reference and the channel selection.</li>
+<li><code>ADCSRA</code>: ADC Control and Status Register A. This register allows us to enable the ADC, kick off conversions, configure interrupts (if necessary), and select the ADC clock prescaler.</li>
+<li><code>ADCSRB</code>: ADC Control and Status Register B. This register allows for configuring ADC trigger sources if auto-triggering is enabled.</li>
+<li><code>ADCH</code> and <code>ADCL</code>: ADC Data Registers. Depending on if the result is left-aligned or right-aligned, <code>ADCH</code> contains the 2/8 most significant bits, and <code>ADCL</code> contains the 2/8 least significant bits (for 10-bit conversions). For 8-bit conversions that are left-aligned, the entire result is stored in <code>ADCH</code>.</li>
+<li><code>DIDR0</code>: Digital Input Disable Register 0. While digital inputs via GPIO functions is regularly enabled on the ATmega328p, setting the corresponding bit here will disable the digital input capability. This is mainly for power usage reduction while using the ADC.</li>
+</ul>
+<p>This project will use a single ADC channel configured at 8-bit resolution, using AVCC as reference. We will also use single triggered conversions rather than continuous conversion. ADC conversions will allow us to poll the voltage on the potentiometer used as our MIDI controller knob.</p>
+<p><em>Demo: ADC project.</em></p>
+<p>See also: <a href="https://embedds.com/adc-on-atmega328-part-1/">ATmega328p ADC tutorial</a>.</p>
+<h4 class="mume-header" id="universal-synchronous-asynchronous-receiver-transmitter-usart">Universal Synchronous-Asynchronous Receiver-Transmitter (USART)</h4>
+
+<p>The last piece we need to be able to build for this project is a means of communicating digital information between the ATMega328p and the computer running the MIDI audio environment.</p>
+<p>This communication can either occur in <em>parallel</em> (with some or all data bits exposed to the receiver simultaneously), or in <em>series</em> (sending one bit at a time). Serial interfaces are generally easier to use, and the ATmega328p exposes a serial peripheral, so we will be using serial communication.</p>
+<img src="res/diagram-parallel-serial-comms.gif" title="Source: https://upload.wikimedia.org/wikipedia/commons/a/a6/Parallel_and_Serial_Transmission.gif">
+<p>For digital communications, it is also necessary for the receiver to determine when to sample the signal to correctly interpret the data bits. In an <em>asynchronous</em> communication, the transmitter and receiver devices agree ahead of time on a speed at which the bits appear on the signal line, and then the data is sent at that rate. In a <em>synchronous</em> communication, the transmitter and receiver devices share a clock signal, and when the clock transitions states, the receiver knows to sample the data line to get a valid bit. Generally, async comms require fewer communications signals, but are less robust, and sync comms are flexible and robust but require more hardware and setup.</p>
+<p><strong>Serial Communication via the ATmega328p</strong></p>
+<p><em>See <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">Atmega328p datasheet</a> page 179.</em></p>
+<p>The ATmega328p exposes the <strong>Universal Synchronous-Asynchronous Receiver-Transmitter (USART)</strong> peripheral which we can use for serial communication. We will be operating this interface in async mode, so we will refer to this peripheral instead as UART.</p>
+<p>A UART interface transmits information in <strong>Frames</strong>, or collections of bits with fixed length. Any given UART frame has a fixed format:</p>
+<ul>
+<li>one <em>start bit</em>, whose transition from signal high to low indicates the beginning of a transmission</li>
+<li>between 5 and 8 (most commonly 8) <em>data bits</em>, which are the actual information being transmitted over the UART connection</li>
+<li>one (optional) <em>parity bit</em>, which is used as a primitive means of frame integrity checking</li>
+<li>one (optionally two) <em>stop bit</em>, whose continuous signal high level indicates the end of the transmitted frame</li>
+</ul>
+<img src="res/diagram-uart-frame.png" title="Source: https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/UART_Frame.svg/1200px-UART_Frame.svg.png">
+<p>Generally, we refer to the speed at which the data line(s) can change state as the <strong>Baud Rate</strong>. The receiver must sample the bits within the bit time, or risk desynchronizing with the transmitter and misinterpreting the data. Therefore there is some tolerance as to how accurate the clock driving transmission needs to be. See <a href="https://www.allaboutcircuits.com/technical-articles/the-uart-baud-rate-clock-how-accurate-does-it-need-to-be/">this tutorial</a> for detailed information on UART baud clock acceptable tolerance.</p>
+<p>The underlying circuit within the ATmega328p that enables the UART peripheral is a simple combination of shift registers and clocks. To send a signal, the programmer loads the TX (transmitter) register with data, the data is copied to an output shift register, and then the baud clock sequentially shifts out one bit at a time to the data bus. The logic for data receipt is effectively the inverse: the clock is used to shift in data by sampling the signal line at a fixed rate, and then the result is copied to the RX (receiver) register.</p>
+<img src="res/diagram-uart-circuit.png" title="Source: https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter#/media/File:UART_block_diagram.svg" width="60%">
+<p><strong>ATmega328p UART Registers and Our Configuration</strong></p>
+<p>The ATmega328p offers six registers used for configuring ADC operation:</p>
+<ul>
+<li><code>UDRn</code>: USART I/O Data Register n. This register is the interface for buffering data bytes transmitted through the USART peripheral. To get the USART RX frame, read from this register. To write to the USART TX frame, write to this register. For frames containing fewer than 8 bits, the data will be LSB-aligned.</li>
+<li><code>UCSRnA</code>: USART Control and Status Register n A. This register primarily holds flags describing the status of the latest transfer.</li>
+<li><code>UCSRnB</code>: USART Control and Status Register n B. This register contains bits used to enable functionality, including interrupts, the transmitter circuit, and receiver circuit.</li>
+<li><code>UCSRnC</code>: USART Control and Status Register n C. This register manages the USART optional mode and framing settings: sync/async, parity mode, stop bit(s), data length, and syncrhonous clock polarity.</li>
+<li><code>UBRRnL</code> and <code>UBRRnH</code>: USART Baud Rate Registers. These registers together define a 12-bit right-aligned value representing the prescaler value for the USART baud clock. See <a href="docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf">datasheet</a> page 180 - section &quot;Clock Generation&quot; - for how this prescaler determines the baud rate.</li>
+</ul>
+<p>This project will use the USART configured in asynchronous mode, no parity bits, one stop bit, at 128000 baud to communicate MIDI frames via UART frames. This interface will let us communicate with the host computer so the MIDI controller can drive MIDI synthesizers, filters, mixers, etc.</p>
+<p><em>Demo: UART project via Arduino serial monitor.</em></p>
+<h3 class="mume-header" id="project-application-logic">Project Application Logic</h3>
+
+<p>We now have all of the tools we need to build a very simple MIDI controller!</p>
+<p>Our application hardware will be connected as follows:</p>
+<img src="res/project-fritzing.png">
+<p>Some notes on the electrical hardware connections:</p>
+<ul>
+<li>LEDs are polar, meaning they will only light up if connected in the correct orientation. Pay close attention to the direction of the angled face inside the LED&apos;s plastic cover. The angled surface points in the direction of current flow to light up the LED.</li>
+<li>Since the specified kit provides LEDs of different colors, you may want to apply a different colored LED to each button for clarity as to which note will be played.</li>
+<li>The resistors laid out are 220 ohm resistors. In the kit specified, 220 ohms corresponds to the resistor with stripes: RED, RED, BLACK, BLACK, BROWN. The color distinctions are fairly hard to see, so make sure you pick out the correct ones.</li>
+<li>The breadboard provided in the kit is broken into two halves; you will need additional jumpers connecting ground-ground and power-power on either half.</li>
+</ul>
+<p>Our application logic follow the shown state machine:</p>
+<img src="res/project-state-machine.png">
+<p><em>See: project 05-midi-controller source.</em><br>
+<em>See: <a href="https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message">table of MIDI messages</a>.</em><br>
+<em>See: <a href="https://www.paulcecchettimusic.com/full-list-of-midi-cc-numbers/">table of MIDI CC numbers</a>.</em><br>
+<em>See: <a href="http://computermusicresource.com/midikeys.html">table of MIDI note numbers</a>.</em></p>
+<p><em>Demo: final project.</em></p>
+<p>To set up the final project:</p>
+<ul>
+<li>Connect hardware to the Arduino board as shown on the Fritzing diagram.</li>
+<li>Build code and program the ATmega328p via source code in projects/05-midi-controller.</li>
+<li>Launch &quot;Hairless MIDI &lt;-&gt; Serial Bridge&quot;. For Windows users, also launch &quot;loopMIDI&quot;.
+<ul>
+<li>Configure the serial port to the Arduino UNO.</li>
+<li>Configure MIDI Out to either loopMIDI (for Windows) or the system&apos;s native MIDI interface.</li>
+</ul>
+</li>
+<li>In a new Google Chrome window, navigate to &quot;<a href="http://audiotool.com">audiotool.com</a>&quot; and log in or create a new account.
+<ul>
+<li>Enter the studio.</li>
+<li>Start a new project.</li>
+<li>Delete all existing equipment in the studio and drop in the &quot;Heisenberg&quot; synth.</li>
+<li>Right-click on the Heisenberg synth, and select &quot;learn MIDI keyboard&quot;. When prompted, press any of the buttons to have audiotool map our MIDI controller buttons to the specified synth channel.</li>
+<li>On any virtual knob, right click and select &quot;learn MIDI controller&quot;. When prompted, turn the knob on the prototype to have audiotool map the knob to the virtual space.</li>
+</ul>
+</li>
+<li>Use the MIDI controller to make music!</li>
+</ul>
+<p><a href="#contents">Index</a></p>
+<h2 class="mume-header" id="further-reading">Further Reading</h2>
+
+<ul>
+<li><a href="https://www.nand2tetris.org/">nand2tetris</a>: a project describing computer element fundamentals which goes into far more depth than this workshop</li>
+<li><a href="https://store.steampowered.com/app/504210/SHENZHEN_IO/">SHENZHEN I/O</a>: a game that emulates the experience of developing digital logic systems with assembly</li>
+<li><a href="https://www.youtube.com/c/BenEater/videos">Ben Eater</a>: a very detailed but laid-back Youtube channel that covers hands-on computer hardware development, including theory</li>
+<li><a href="https://www.youtube.com/c/EevblogDave/videos">EEVBlog</a>: a mystery-of-the-day style Youtube channel covering Electrical and Mechanical engineering tips</li>
+<li><a href="https://www.youtube.com/c/AndreasSpiess/videos">Andreas Speiss</a>: a highlights-style Youtube channel discussing embedded systems practices, tools, and common prototyping hardware components</li>
+</ul>
 <p><a href="#contents">Index</a></p>
 
       </div>
