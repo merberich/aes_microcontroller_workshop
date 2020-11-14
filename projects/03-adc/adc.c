@@ -4,7 +4,7 @@
 #include <avr/io.h>
 #include "bit_tools.h"
 
-bool ADC__init(ADC_Vref vref, ADC_Prescaler presc) {
+bool ADC__init(ADC__Vref vref, ADC__Prescaler presc) {
   if (vref >= ADC_VREF_MAX || presc >= ADC_PRESC_MAX) {
     return false;
   }
@@ -30,7 +30,7 @@ bool ADC__isInitialized(void) {
   return _BIT_CHECK(ADCSRA, ADEN);
 }
 
-bool ADC__startConversion(ADC_ChannelSelect chan) {
+bool ADC__startConversion(ADC__ChannelSelect chan) {
   if (chan >= ADC_CHAN_MAX || ADC__isConversionActive() || !ADC__isInitialized()) {
     return false;
   }

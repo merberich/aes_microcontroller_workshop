@@ -10,7 +10,7 @@ typedef enum {
   ADC_VREF_AVCC = 0x1,       //! Using AVCC (VCC) as voltage reference.
   ADC_VREF_INTERNAL = 0x3,   //! Using 1.1V internal ADC voltage reference.
   ADC_VREF_MAX               //! Number of voltage reference options (invalid value).
-} ADC_Vref;
+} ADC__Vref;
 
 //! Listing of all valid ADC input channel configurations.
 typedef enum {
@@ -24,7 +24,7 @@ typedef enum {
   ADC_CHAN_INTERNAL = 0xE,  //! Channel connected to 1.1V internal reference.
   ADC_CHAN_GND = 0xF,       //! Channel connected directly to ground net.
   ADC_CHAN_MAX              //! Highest number of channel options (invalid value).
-} ADC_ChannelSelect;
+} ADC__ChannelSelect;
 
 //! Listing possible prescalers for ADC clock.
 typedef enum {
@@ -37,19 +37,19 @@ typedef enum {
   ADC_PRESC_64,
   ADC_PRESC_128,
   ADC_PRESC_MAX  //! Number of prescaler options (invalid value).
-} ADC_Prescaler;
+} ADC__Prescaler;
 
 //! Initialize this ADC driver. Must be called before any other ADC driver function.
 //! Assign voltage refrence and prescaler before initializing.
 //! Return false if voltage reference or prescaler arguments are invalid.
-bool ADC__init(ADC_Vref vref, ADC_Prescaler presc);
+bool ADC__init(ADC__Vref vref, ADC__Prescaler presc);
 
 //! Return true if this ADC has been initialized.
 bool ADC__isInitialized(void);
 
 //! Begin an ADC conversion on the specified channel.
 //! Returns false if not initialized, channel is invalid, or conversion active.
-bool ADC__startConversion(ADC_ChannelSelect chan);
+bool ADC__startConversion(ADC__ChannelSelect chan);
 
 //! Returns true if a conversion is still active. False on complete or no conversion.
 bool ADC__isConversionActive(void);

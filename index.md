@@ -1766,18 +1766,46 @@ See also: [ATmega328p ADC tutorial](https://embedds.com/adc-on-atmega328-part-1/
 
 #### Universal Synchronous-Asynchronous Receiver-Transmitter (USART)
 
-`@todo UART (serial protocols, generally)`
-`@todo see datasheet page 179`
-`@todo mention baud rate error tolerance`
-  - see [baud rate error tolerance](https://www.maximintegrated.com/en/design/technical-documents/tutorials/2/2141.html)
-  - see simpler [baud rate error tolerance](https://www.allaboutcircuits.com/technical-articles/the-uart-baud-rate-clock-how-accurate-does-it-need-to-be/)
+The last piece we need to be able to build for this project is a means of communicating digital information between the ATMega328p and the computer running the MIDI audio environment.
 
-`@todo also see reference in [Arduino serial core](https://github.com/arduino/ArduinoCore-avr/blob/master/cores/arduino/HardwareSerial.cpp)`
-`@todo see reference driver here: https://github.com/ExploreEmbedded/ATmega32_ExploreUltraAvrDevKit/archive/master.zip`
-`@todo see http://exploreembedded.com/wiki/Serial_UART_Interface_with_AVR`
-`@todo see https://www.gadgetronicx.com/avr-serial-communication-uart/`
+This communication can either occur in _parallel_ (with some or all data bits exposed to the receiver simultaneously), or in _series_ (sending one bit at a time). Serial interfaces are generally easier to use, and the ATmega328p exposes a serial peripheral, so we will be using serial communication.
 
-`@todo optionally timers: http://www.avrbeginners.net/architecture/timers/timers.html`
+<img src="res/diagram-parallel-serial-comms.gif" title="Source: https://upload.wikimedia.org/wikipedia/commons/a/a6/Parallel_and_Serial_Transmission.gif">
+
+For digital communications, it is also necessary for the receiver to determine when to sample the signal to correctly interpret the data bits. In an _asynchronous_ communication, the transmitter and receiver devices agree ahead of time on a speed at which the bits appear on the signal line, and then the data is sent at that rate. In a _synchronous_ communication, the transmitter and receiver devices share a clock signal, and when the clock transitions states, the receiver knows to sample the data line to get a valid bit. Generally, async comms require fewer communications signals, but are less robust, and sync comms are flexible and robust but require more hardware and setup.
+
+**Serial Communication via the ATmega328p**
+
+_See [Atmega328p datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 179._
+
+The ATmega328p exposes the **Universal Synchronous-Asynchronous Receiver-Transmitter (USART)** peripheral which we can use for serial communication. We will be operating this interface in async mode, so we will refer to this peripheral instead as UART.
+
+A UART interface transmits information in **Frames**, or collections of bits with fixed length. Any given UART frame has a fixed format:
+- one _start bit_, whose transition from signal high to low indicates the beginning of a transmission
+- between 5 and 8 (most commonly 8) _data bits_, which are the actual information being transmitted over the UART connection
+- one (optional) _parity bit_, which is used as a primitive means of frame integrity checking
+- one (optionally two) _stop bit_, whose continuous signal high level indicates the end of the transmitted frame
+
+<img src="res/diagram-uart-frame.png" title="Source: https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/UART_Frame.svg/1200px-UART_Frame.svg.png">
+
+Generally, we refer to the speed at which the data line(s) can change state as the **Baud Rate**. The receiver must sample the bits within the bit time, or risk desynchronizing with the transmitter and misinterpreting the data. Therefore there is some tolerance as to how accurate the clock driving transmission needs to be. See [this tutorial](https://www.allaboutcircuits.com/technical-articles/the-uart-baud-rate-clock-how-accurate-does-it-need-to-be/) for detailed information on UART baud clock acceptable tolerance.
+
+The underlying circuit within the ATmega328p that enables the UART peripheral is a simple combination of shift registers and clocks. To send a signal, the programmer loads the TX (transmitter) register with data, the data is copied to an output shift register, and then the baud clock sequentially shifts out one bit at a time to the data bus. The logic for data receipt is effectively the inverse: the clock is used to shift in data by sampling the signal line at a fixed rate, and then the result is copied to the RX (receiver) register.
+
+<img src="res/diagram-uart-circuit.png" title="Source: https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter#/media/File:UART_block_diagram.svg" width="60%">
+
+**ATmega328p UART Registers and Our Configuration**
+
+The ATmega328p offers six registers used for configuring ADC operation:
+- `UDRn`: USART I/O Data Register n. This register is the interface for buffering data bytes transmitted through the USART peripheral. To get the USART RX frame, read from this register. To write to the USART TX frame, write to this register. For frames containing fewer than 8 bits, the data will be LSB-aligned.
+- `UCSRnA`: USART Control and Status Register n A. This register primarily holds flags describing the status of the latest transfer.
+- `UCSRnB`: USART Control and Status Register n B. This register contains bits used to enable functionality, including interrupts, the transmitter circuit, and receiver circuit.
+- `UCSRnC`: USART Control and Status Register n C. This register manages the USART optional mode and framing settings: sync/async, parity mode, stop bit(s), data length, and syncrhonous clock polarity.
+- `UBRRnL` and `UBRRnH`: USART Baud Rate Registers. These registers together define a 12-bit right-aligned value representing the prescaler value for the USART baud clock. See [datasheet](docs/Datasheet__Microcontroller__Microchip_ATmega328p.pdf) page 180 - section "Clock Generation" - for how this prescaler determines the baud rate.
+
+This project will use the USART configured in asynchronous mode, no parity bits, one stop bit, at 128000 baud to communicate MIDI frames via UART frames. This interface will let us communicate with the host computer so the MIDI controller can drive MIDI synthesizers, filters, mixers, etc.
+
+_Demo: UART project via Arduino serial monitor._
 
 ### Project Application Logic
 
