@@ -1,6 +1,12 @@
 
 # Cal Poly Audio Engineering Society Workshop: Microcontroller Theory and Application
 
+This tutorial series and projetc source code are all located at the [source repository](https://github.com/merberich/aes_microcontroller_workshop).
+
+This information and all source code is released under the [MIT License](https://en.wikipedia.org/wiki/MIT_License). You are free to modify and use as you see fit. Donations / references are always welcome.
+
+Video recordings of the live workshop are available [via Youtube](https://www.youtube.com/playlist?list=PLDScyU04g40EhVDvprRGFXfcoR6jQa3Al).
+
 ## Contents
 
 <!-- TOC depthFrom:2 depthTo:2 -->
@@ -1601,6 +1607,12 @@ For all systems:
    a) For Windows users only, also download and install [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html).
 2) Download and install Google Chrome browser.
 3) Create account on [audiotool](https://www.audiotool.com/) and log in via Chrome only.
+
+**III. Download the Source Code Repository**
+
+1) Navigate to [the source code repository](https://github.com/merberich/aes_microcontroller_workshop).
+2) If you have `git` installed, you can optionally choose to clone the repo.
+3) If you do not have `git` installed, download via the green "Code" button -> "Download ZIP". Extract the ZIP where you will be doing development.
 
 [Index](#contents)
 
