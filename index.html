@@ -2019,10 +2019,11 @@ c) Make sure <code>avrdude</code> throws no errors syaing it can&apos;t connect 
 <ol>
 <li>Follow <a href="http://fab.cba.mit.edu/classes/863.16/doc/projects/ftsmin/windows_avr.html">these instructions</a><br>
 a) For the Atmel GNU Toolchain, use <a href="https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers">this link</a> instead. Also rename the folder to <code>avr8-gnu-toolchain</code> when placing in <code>C:\Program Files</code>.<br>
-b) Instead of the listed avrdude link, use <a href="http://download.savannah.gnu.org/releases/avrdude/">this link</a>, targeting <code>avrdude-6.3-mingw32.zip</code>.<br>
 b) Skip installing drivers for the programmer.<br>
 c) Skip avrdude sanity check (we&apos;ll do this live).<br>
-d) When testing the toolchain, make sure you do so in <code>git bash</code> rather than <code>cmd</code>.</li>
+d) When testing the toolchain, make sure you do so in <code>git bash</code> rather than <code>cmd</code>.<br>
+e) Make sure to log out / log in after changing your environment variables so that they become visible from within Git Bash.<br>
+f) If the toolchain programs are having issues loading properly, try installing <a href="https://www.microchip.com/mplab/microchip-studio">Atmel/Microchip Studio</a>, which should correctly update paths in Git Bash.</li>
 </ol>
 <p><strong>II. Install Other Software</strong></p>
 <p>For all systems:</p>

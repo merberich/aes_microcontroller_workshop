@@ -1595,10 +1595,11 @@ For Mac:
 For Windows:
 1) Follow [these instructions](http://fab.cba.mit.edu/classes/863.16/doc/projects/ftsmin/windows_avr.html)
    a) For the Atmel GNU Toolchain, use [this link](https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers) instead. Also rename the folder to `avr8-gnu-toolchain` when placing in `C:\Program Files`.
-   b) Instead of the listed avrdude link, use [this link](http://download.savannah.gnu.org/releases/avrdude/), targeting `avrdude-6.3-mingw32.zip`.
    b) Skip installing drivers for the programmer.
    c) Skip avrdude sanity check (we'll do this live).
    d) When testing the toolchain, make sure you do so in `git bash` rather than `cmd`.
+   e) Make sure to log out / log in after changing your environment variables so that they become visible from within Git Bash.
+   f) If the toolchain programs are having issues loading properly, try installing [Atmel/Microchip Studio](https://www.microchip.com/mplab/microchip-studio), which should correctly update paths in Git Bash.
 
 **II. Install Other Software**
 
